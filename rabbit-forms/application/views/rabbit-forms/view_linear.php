@@ -22,12 +22,13 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Main extends Controller
-{
-    public function index()
-    {
-        $this->load->library('rabbitform');
-
-        echo $this->rabbitform->run('test.yaml');
-    }
-}
+?>
+<?= $form_open ?>
+<?php foreach($fields as $field): ?>
+<div style="float: left; width: <?= $view_params['label_width'] ?>px;">
+    <?= $field['label'] ?>:
+</div> <?= $field['component'] ?>
+<hr />
+<?php endforeach; ?>
+<button type="submit">Enviar</button>
+<?= $form_close ?>

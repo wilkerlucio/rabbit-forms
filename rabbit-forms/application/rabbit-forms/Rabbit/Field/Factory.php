@@ -22,24 +22,33 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/**
- * The most basic field, a simple textbox field
- */
-class Rabbit_Field_TextBox extends Rabbit_Field
+class Rabbit_Field_Factory
 {
     /**
-     * @see Rabbit_Field::getFieldHtml()
+     * Create a new field based on name
      *
-     * @return string
+     * @param string $field
+     * @param Rabbit_Form $form
+     * @return Rabbit_Field
      */
-    public function getFieldHtml()
+    public static function factory($field, $form)
     {
-        return sprintf(
-        	'<input type="text" name="%s" value="%s" class="%s" style="%s" />',
-            $this->getName(),
-            $this->getValue(),
-            $this->getAttribute('class', ''),
-            $this->getAttribute('style', '')
-        );
+        $classname = 'Rabbit_Field_' . $field;
+
+        if(!class_exists($classname)) {
+            $ci = get_instance();
+            $ci->config->load('rabbit-forms');
+
+            foreach($ci->config->item('rabbit-fields-classpath') as $dir) {
+                $path = $dir . $field . '.php';
+
+                if(file_exists($path)) {
+                    require_once($path);
+                    break;
+                }
+            }
+        }
+
+        return class_exists($classname) ? new $classname($form) : null;
     }
 }

@@ -22,12 +22,22 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Main extends Controller
+/**
+ * The most basic field, a simple textbox field
+ */
+class Rabbit_Field_TextArea extends Rabbit_Field
 {
-    public function index()
+    /**
+     * @see Rabbit_Field::getFieldHtml()
+     *
+     * @return string
+     */
+    public function getFieldHtml()
     {
-        $this->load->library('rabbitform');
-
-        echo $this->rabbitform->run('test.yaml');
+        return sprintf(
+        	'<textarea name="%s">%s</textarea>',
+            $this->getName(),
+            $this->getValue()
+        );
     }
 }

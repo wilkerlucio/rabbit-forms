@@ -1,0 +1,16 @@
+form:
+    table: content
+    fields:
+        title:
+            type: TextBox
+            label: Título
+            params:
+                style: 'width: 300px'
+        content:
+            type: TextArea
+            label: Conteúdo
+            value: Start Value
+view:
+    template: rabbit-forms/view_linear.php
+    params:
+        label_width: 200
