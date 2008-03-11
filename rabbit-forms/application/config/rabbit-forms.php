@@ -27,14 +27,14 @@
  *
  * This array contains the paths to search for form plugins
  */
-$config['rabbit-fields-classpath'] = array(APPPATH . 'rabbit-forms/Rabbit/Field/');
+$config['rabbit-fields-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit/Field/');
 
 /**
  * Configure YAML paths
  */
-$config['rabbit-yml-classpath'] = array(APPPATH . 'rabbit-form-config/');
+$config['rabbit-yml-classpath'] = array(APPPATH . 'rabbit-forms/forms/');
 
 /**
  * Configure Validator paths
  */
-$config['rabbit-validator-classpath'] = array(APPPATH . 'rabbit-forms/Rabbit/Validator/');
+$config['rabbit-validator-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit/Validator/');

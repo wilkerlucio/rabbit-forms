@@ -22,12 +22,12 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-require_once(APPPATH . 'rabbit-forms/spyc.php');
-require_once(APPPATH . 'rabbit-forms/Rabbit/Form.php');
-require_once(APPPATH . 'rabbit-forms/Rabbit/Field.php');
-require_once(APPPATH . 'rabbit-forms/Rabbit/Field/Factory.php');
-require_once(APPPATH . 'rabbit-forms/Rabbit/Validator.php');
-require_once(APPPATH . 'rabbit-forms/Rabbit/Validator/Factory.php');
+require_once(APPPATH . 'rabbit-forms/lib/spyc.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Form.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/Factory.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Validator.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Validator/Factory.php');
 
 class Rabbitform
 {
