@@ -69,6 +69,13 @@ abstract class Rabbit_Validator
         return $this->message;
     }
 
+    /**
+     * Get one validator param
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
     public function getParam($name, $default = null)
     {
         return isset($this->params[$name]) ? $this->params[$name] : $default;
@@ -90,5 +97,5 @@ abstract class Rabbit_Validator
      *
      * @return boolean
      */
-    abstract function validate();
+    abstract public function validate();
 }

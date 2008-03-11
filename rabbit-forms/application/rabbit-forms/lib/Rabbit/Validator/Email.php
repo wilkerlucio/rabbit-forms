@@ -30,13 +30,13 @@ class Rabbit_Validator_Email extends Rabbit_Validator
      *
      * @return boolean
      */
-    function validate()
+    public function validate()
     {
         $value = $this->field->getRawValue();
         
         if(!preg_match("/^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$/ix", $value)) {
             $this->message = sprintf(
-                'O campo %s deve ser um email válido',
+                'The %s field must contain a valid email address.',
                 $this->field->getLabel()
             );
             

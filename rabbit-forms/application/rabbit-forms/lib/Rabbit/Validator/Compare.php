@@ -22,7 +22,7 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Rabbit_Validator_Length extends Rabbit_Validator
+class Rabbit_Validator_Compare extends Rabbit_Validator
 {
     /**
      * @see Rabbit_Validator::validate()
@@ -31,34 +31,48 @@ class Rabbit_Validator_Length extends Rabbit_Validator
      */
     public function validate()
     {
-        $value  = $this->field->getRawValue();
-        $length = strlen($value);
+        $to = $this->field->getForm()->getField($this->getParam('compareTo', ''));
         
-        $exact = $this->getParam('exact');
-        $min   = $this->getParam('min');
-        $max   = $this->getParam('max');
-        
-        if($exact !== null && $length != $exact) {
+        if($to === null) {
             $this->message = sprintf(
-                'The %s field must be exactly %s characters in length.',
-                $this->field->getLabel(),
-                $exact
+                'The %s field is not found',
+                $this->getParam('compareTo', '')
             );
             
             return false;
-        } elseif($min !== null && $length < $min) {
+        }
+        
+        $comparator = $this->getParam('comparator', 'equals');
+        $method     = 'compare_' . $comparator;
+        
+        if(!method_exists($this, $method)) {
             $this->message = sprintf(
-                'The %s field must be at least %s characters in length.',
-                $this->field->getLabel(),
-                $min
+                'The %s comparator is not found',
+                $comparator
             );
             
             return false;
-        } elseif($max !== null && $length > $max) {
+        }
+        
+        return call_user_func(array($this, $method), $to);
+    }
+    
+    /**
+     * Check if the fields has same value
+     *
+     * @param Rabbit_Field $to
+     * @return boolean
+     */
+    public function compare_equals(Rabbit_Field $to)
+    {
+        $v1 = $this->field->getRawValue();
+        $v2 = $to->getRawValue();
+        
+        if($v1 != $v2) {
             $this->message = sprintf(
-                'The %s field can not exceed %s characters in length.',
+                'The %s field must be equals to %s field',
                 $this->field->getLabel(),
-                $max
+                $to->getLabel()
             );
             
             return false;
@@ -66,4 +80,6 @@ class Rabbit_Validator_Length extends Rabbit_Validator
         
         return true;
     }
+    
+    //TODO: implement more comparations
 }

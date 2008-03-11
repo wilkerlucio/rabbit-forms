@@ -193,7 +193,9 @@ class Rabbit_Form
         $data = array();
 
         foreach($this->fields as $field) {
-            $data[$field->getName()] = $field->getRawValue();
+            if($field->getPersist() == true) {
+                $data[$field->getName()] = $field->getRawValue();
+            }
         }
 
         return $data;

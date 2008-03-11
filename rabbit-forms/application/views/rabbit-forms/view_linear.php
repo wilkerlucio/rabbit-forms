@@ -24,17 +24,16 @@
 
 ?>
 <?= $form_open ?>
-<?php foreach($fields as $field): ?>
-<div style="float: left; width: <?= $params->get('label_width', '200') ?>px;">
-    <?= $field['label'] ?>:
-</div>
-<div style="float: left; width: 500px;">
-<?= $field['component'] ?>
-</div>
-<div style="color: #f00;">
-    <?= $field['validation'] ?>
-</div>
-<hr style="clear: both; margin-top: 5px;" />
-<?php endforeach; ?>
-<button type="submit">Enviar</button>
+<table>
+    <?php foreach($fields as $field): ?>
+    <tr style="height: 50px;">
+        <td style="width: 150px;"><?= $field['label'] ?>:</td>
+        <td><?= $field['component'] ?></td>
+        <td style="color: #f00;"><?= $field['validation'] ?></td>
+    </tr>
+    <?php endforeach; ?>
+    <tr style="height: 50px;">
+        <td colspan="2" style="text-align: center;"><button type="submit">Enviar</button></td>
+    </tr>
+</table>
 <?= $form_close ?>

@@ -4,9 +4,21 @@ form:
         title:
             type: TextBox
             label: Título
+            params:
+                style: 'width: 200px'
             validators:
                 - type: Required
                 - type: Email
+        name:
+            type: TextBox
+            label: Igual ao acima
+            params:
+                style: 'width: 200px'
+            validators:
+                - type: Required
+                - type: Compare
+                  params:
+                      compareTo: title
         content:
             type: TextArea
             label: Conteúdo

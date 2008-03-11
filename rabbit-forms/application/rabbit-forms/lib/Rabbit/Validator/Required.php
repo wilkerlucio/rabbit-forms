@@ -29,7 +29,7 @@ class Rabbit_Validator_Required extends Rabbit_Validator
      *
      * @return boolean
      */
-    function validate()
+    public function validate()
     {
         $value = $this->field->getRawValue();
 
@@ -39,7 +39,7 @@ class Rabbit_Validator_Required extends Rabbit_Validator
 
         if(!$value) {
             $this->message = sprintf(
-                'O campo %s é obrigatório',
+                'The %s field is required.',
                 $this->field->getLabel()
             );
 

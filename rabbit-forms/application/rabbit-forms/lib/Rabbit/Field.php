@@ -82,6 +82,14 @@ abstract class Rabbit_Field
      * @var string
      */
     protected $validation_message;
+    
+    /**
+     * This variable determines if a field will be persisted
+     * in database or not
+     *
+     * @var boolean
+     */
+    protected $persist = true;
 
     /**
      * Construct a new field
@@ -232,6 +240,22 @@ abstract class Rabbit_Field
         $this->value = $value;
     }
 
+    /**
+     * @return boolean
+     */
+    public function getPersist()
+    {
+        return $this->persist;
+    }
+
+    /**
+     * @param boolean $persist
+     */
+    public function setPersist($persist)
+    {
+        $this->persist = $persist;
+    }
+    
     /**
      * Add a validator to the field
      *
