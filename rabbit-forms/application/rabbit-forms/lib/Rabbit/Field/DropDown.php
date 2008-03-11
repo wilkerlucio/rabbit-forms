@@ -40,15 +40,44 @@ class Rabbit_Field_DropDown extends Rabbit_Field
     }
 
     /**
+     * @see Rabbit_Field::loadAssets()
+     *
+     */
+    public function loadAssets()
+    {
+        if($this->getAttribute('updateField') !== null) {
+            $this->form->addAsset('jquery-1.2.3.pack.js');
+            $this->form->addAsset('dropdown-forward.js');
+        }
+    }
+
+    /**
      * @see Rabbit_Field::getFieldHtml()
      *
      * @return string
      */
     public function getFieldHtml()
     {
+        $ci =& get_instance();
+        $ci->load->helper('rabbit');
+
+        $attr['id']   = $this->getName();
+        $attr['name'] = $this->getName();
+
+        if($this->getAttribute('updateField') !== null) {
+            $update = $this->getAttribute('updateField');
+
+            $attr['onchange'] = sprintf(
+                "forwardSelect('%s', '%s', '%s')",
+                $update['url'],
+                $this->getName(),
+                $update['target']
+            );
+        }
+
         $html = sprintf(
-            '<select name="%s">',
-            $this->getName()
+            '<select %s>',
+            rabbit_attributes_build($attr)
         );
 
         foreach($this->getItems() as $value => $name) {

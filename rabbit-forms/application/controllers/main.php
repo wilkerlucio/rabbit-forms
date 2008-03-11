@@ -30,4 +30,16 @@ class Main extends Controller
 
         echo $this->rabbitform->run('test.yml', $id);
     }
+
+    public function dropdownGet()
+    {
+        $value = $this->input->post('value');
+        $data  = array();
+
+        for($i = $value; $i < 10; $i++) {
+            $data[$i] = $i;
+        }
+
+        echo json_encode($data);
+    }
 }

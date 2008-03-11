@@ -44,12 +44,18 @@ $config['rabbit-validator-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit
  */
 $config['rabbit-default-settings'] = array(
 	'form' => array(
-		'primary_key' => 'id'
+		'primary_key'      => 'id',
+        'automatic_assets' => true
 	),
-	
+
 	'view' => array(
 		'template' => 'rabbit-forms/view_linear'
 	),
-	
+
 	'redirect' => ''
 );
+
+/**
+ * Assets path
+ */
+$config['rabbit-assets'] = './rabbit-assets/';

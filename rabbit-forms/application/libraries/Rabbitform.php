@@ -50,10 +50,11 @@ class Rabbitform
      */
     public function __construct()
     {
-        $this->ci = get_instance();
+        $this->ci =& get_instance();
         $this->ci->config->load('rabbit-forms');
+        $this->ci->load->helper('rabbit');
     }
-    
+
     /**
      * Prepare config data
      *
@@ -64,7 +65,7 @@ class Rabbitform
     {
     	//load helper
         $this->ci->load->helper('rabbit');
-        
+
         //check for YML config
         if(gettype($config) == 'string') {
             foreach($this->ci->config->item('rabbit-yml-classpath') as $dir) {
@@ -81,7 +82,7 @@ class Rabbitform
             $this->ci->config->item('rabbit-default-settings'),
             $config
         );
-        
+
         //return data
         return $config;
     }
@@ -96,9 +97,14 @@ class Rabbitform
     public function prepare_edit(array $config, $id)
     {
         $edit = array();
-        
+
         if($id !== false && count($_POST) == 0) {
-            $fields = implode(',', array_keys($config['form']['fields']));
+            $fields = rabbit_filter_fields(
+                $config['form']['table'],
+                array_keys($config['form']['fields'])
+            );
+
+            $fields = implode(',', $fields);
 
             $this->ci->load->database();
 
@@ -110,10 +116,10 @@ class Rabbitform
                 $id
             ))->row_array();
         }
-        
+
         return $edit;
     }
-    
+
     /**
      * Prepare form
      *
@@ -125,12 +131,18 @@ class Rabbitform
     {
     	//create form
         $form = new Rabbit_Form($config['form']['table']);
+        $form->setGenerateAssets($config['form']['automatic_assets']);
 
         //parse fields
         foreach($config['form']['fields'] as $name => $field) {
             $f = Rabbit_Field_Factory::factory($field['type'], $form);
             $f->setName($name);
             $f->setLabel($field['label']);
+
+            //set persist
+            if(isset($field['persist'])) {
+                $f->setPersist($field['persist']);
+            }
 
             //set params
             if(isset($field['params'])) {
@@ -157,10 +169,10 @@ class Rabbitform
                 }
             }
         }
-        
+
         return $form;
     }
-    
+
     /**
      * Fastest way to create a form
      *
@@ -190,7 +202,7 @@ class Rabbitform
         } else {
             $data = $form->generate();
             $data['params'] = new Rabbit_Container();
-            
+
             if(isset($config['view']['params'])) {
                 $data['params']->setData($config['view']['params']);
             }

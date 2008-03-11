@@ -36,14 +36,54 @@ function rabbit_array_merge(array $array1, array $array2)
 			if(!isset($array1[$k]) || gettype($array1[$k]) != 'array') {
 				$array1[$k] = array();
 			}
-			
+
 			$array1[$k] = rabbit_array_merge($array1[$k], $v);
-			
+
 			continue;
 		}
-		
+
 		$array1[$k] = $v;
 	}
-	
+
 	return $array1;
+}
+
+/**
+ * Enter description here...
+ *
+ * @param string $table
+ * @param array $data
+ * @return array
+ */
+function rabbit_filter_fields($table, array $data) {
+    $ci =& get_instance();
+    $ci->load->database();
+
+    $out = array();
+    $fields = $ci->db->list_fields($table);
+
+    foreach($data as $field) {
+        if(in_array($field, $fields)) {
+            $out[] = $field;
+        }
+    }
+
+    return $out;
+}
+
+/**
+ * Build attributes string based on array data
+ *
+ * @param array $data
+ * @return string
+ */
+function rabbit_attributes_build(array $data)
+{
+    $attributes = array();
+
+    foreach($data as $k => $v) {
+        $attributes[] = $k . ' = "' . $v . '"';
+    }
+
+    return implode(" ", $attributes);
 }

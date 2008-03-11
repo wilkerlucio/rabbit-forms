@@ -23,17 +23,43 @@
  */
 
 ?>
+<style type="text/css">
+
+.rabbit-field-container {
+    background: #eef;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.rabbit-field-label {
+    float: left;
+    width: 180px;
+}
+
+.rabbit-field-component {
+    float: left;
+    width: 250px;
+}
+
+.rabbit-field-error {
+    color: #f00;
+}
+
+.rabbit-field-clear {
+    clear: both;
+}
+
+</style>
+<?= $form_assets ?>
 <?= $form_open ?>
-<table>
-    <?php foreach($fields as $field): ?>
-    <tr style="height: 50px;">
-        <td style="width: 150px;"><?= $field['label'] ?>:</td>
-        <td><?= $field['component'] ?></td>
-        <td style="color: #f00;"><?= $field['validation'] ?></td>
-    </tr>
-    <?php endforeach; ?>
-    <tr style="height: 50px;">
-        <td colspan="2" style="text-align: center;"><button type="submit">Enviar</button></td>
-    </tr>
-</table>
+<?php foreach($fields as $field): ?>
+<div class="rabbit-field-container">
+    <div class="rabbit-field-label"><?= $field['label'] ?>:</div>
+    <div class="rabbit-field-component"><?= $field['component'] ?></div>
+    <div class="rabbit-field-error"><?= $field['validation'] ?></div>
+    <div class="rabbit-field-clear"></div>
+</div>
+<?php endforeach; ?>
+<button type="submit">Enviar</button>
 <?= $form_close ?>
+<?= $form_exec ?>

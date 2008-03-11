@@ -28,6 +28,13 @@
 class Rabbit_Form
 {
     /**
+     * Set false to not generate form assets
+     *
+     * @var boolean
+     */
+    protected $generateAssets = true;
+
+    /**
      * List containg shared assets of form
      *
      * @var array
@@ -63,6 +70,13 @@ class Rabbit_Form
     protected $view;
 
     /**
+     * Client JS post form executions
+     *
+     * @var array
+     */
+    protected $clientExec = array();
+
+    /**
      * Create a new form
      *
      * @param string $table
@@ -70,6 +84,22 @@ class Rabbit_Form
     public function __construct($table)
     {
         $this->table = $table;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getGenerateAssets()
+    {
+        return $this->generateAssets;
+    }
+
+    /**
+     * @param boolean $generateAssets
+     */
+    public function setGenerateAssets($generateAssets)
+    {
+        $this->generateAssets = $generateAssets;
     }
 
     /**
@@ -110,6 +140,61 @@ class Rabbit_Form
     }
 
     /**
+     * Add form asset
+     *
+     * @param string $path
+     * @return void
+     */
+    public function addAsset($path)
+    {
+        if(!in_array($path, $this->assets)) {
+            $this->assets[] = $path;
+        }
+    }
+
+    /**
+     * Add client code to run after form
+     *
+     * @param string $code
+     * @return void
+     */
+    public function addClientExec($code)
+    {
+        $this->clientExec[] = $code;
+    }
+
+    /**
+     * Generate output for resources
+     *
+     * @return string
+     */
+    public function getAssetsOutput()
+    {
+        if(!$this->getGenerateAssets()) {
+            return '';
+        }
+
+        $ci =& get_instance();
+
+        $patterns = array(
+            'js'  => '<script type="text/javascript" src="%s"></script>',
+            'css' => '<link rel="stylesheet" type="text/css" href="%s" />'
+        );
+
+        $output = "";
+
+        foreach($this->assets as $asset) {
+            $url  = $ci->config->item('rabbit-assets') . $asset;
+            $info = pathinfo($asset);
+            $ext  = strtolower($info['extension']);
+
+            $output .= sprintf($patterns[$ext], $url) . "\n";
+        }
+
+        return $output;
+    }
+
+    /**
      * Get open tag of form
      *
      * @return string
@@ -118,6 +203,24 @@ class Rabbit_Form
     {
         return sprintf('<form action="%s" method="post">',
                        $_SERVER['REQUEST_URI']);
+    }
+
+    /**
+     * This method load post execute form javascripts
+     *
+     * @return string
+     */
+    public function getPostExec()
+    {
+        $output = '';
+
+        if(count($this->clientExec) > 0) {
+            $output = '<script type="text/javascript">' . "\n"
+                    . implode("\n", $this->clientExec)
+                    . "\n</script>";
+        }
+
+        return $output;
     }
 
     /**
@@ -137,11 +240,11 @@ class Rabbit_Form
      */
     public function generate()
     {
-        $data['form_open'] = $this->getOpenTag();
-
+        $data['form_open']   = $this->getOpenTag();
         $data['fields'] = array();
 
         foreach($this->fields as $field) {
+            $field->loadAssets();
             $data['fields'][$field->getName()] = array(
                 'label'      => $field->getLabel(),
                 'component'  => $field->getFieldHtml(),
@@ -149,7 +252,9 @@ class Rabbit_Form
             );
         }
 
-        $data['form_close'] = $this->getCloseTag();
+        $data['form_close']  = $this->getCloseTag();
+        $data['form_assets'] = $this->getAssetsOutput();
+        $data['form_exec']   = $this->getPostExec();
 
         return $data;
     }
@@ -162,13 +267,13 @@ class Rabbit_Form
     public function validate()
     {
         $return = true;
-        
+
         foreach($this->fields as $field) {
             if($field->validate() == false) {
                 $return = false;
             }
         }
-        
+
         return $return && $this->formValidate();
     }
 
@@ -213,7 +318,7 @@ class Rabbit_Form
             $field->preChange();
         }
 
-        $ci = get_instance();
+        $ci =& get_instance();
         $ci->load->database();
 
         $data = $this->getFieldsData();
@@ -240,7 +345,7 @@ class Rabbit_Form
             $field->preChange();
         }
 
-        $ci = get_instance();
+        $ci =& get_instance();
         $ci->load->database();
 
         $data = $this->getFieldsData();

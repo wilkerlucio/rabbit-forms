@@ -82,7 +82,7 @@ abstract class Rabbit_Field
      * @var string
      */
     protected $validation_message;
-    
+
     /**
      * This variable determines if a field will be persisted
      * in database or not
@@ -103,6 +103,25 @@ abstract class Rabbit_Field
         $this->form->addField($this);
 
         $this->setAttributes($attributes);
+        $this->initialize();
+    }
+
+    /**
+     * Overload this method to initialize your field
+     *
+     * @return void
+     */
+    protected function initialize()
+    {
+    }
+
+    /**
+     * Overload this method to load field assets
+     *
+     * @return void
+     */
+    public function loadAssets()
+    {
     }
 
     /**
@@ -114,7 +133,7 @@ abstract class Rabbit_Field
     {
         return $this->form;
     }
-    
+
     /**
      * Get field label
      *
@@ -255,7 +274,7 @@ abstract class Rabbit_Field
     {
         $this->persist = $persist;
     }
-    
+
     /**
      * Add a validator to the field
      *
