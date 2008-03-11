@@ -142,7 +142,7 @@ class Rabbit_Form
         $data['fields'] = array();
 
         foreach($this->fields as $field) {
-            $data['fields'][] = array(
+            $data['fields'][$field->getName()] = array(
                 'label'      => $field->getLabel(),
                 'component'  => $field->getFieldHtml(),
                 'validation' => $field->getValidationMessage()
@@ -161,13 +161,15 @@ class Rabbit_Form
      */
     public function validate()
     {
+        $return = true;
+        
         foreach($this->fields as $field) {
             if($field->validate() == false) {
-                return false;
+                $return = false;
             }
         }
-
-        return $this->formValidate();
+        
+        return $return && $this->formValidate();
     }
 
     /**

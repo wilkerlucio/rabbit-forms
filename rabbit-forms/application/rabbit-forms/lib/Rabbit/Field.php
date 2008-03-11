@@ -98,6 +98,16 @@ abstract class Rabbit_Field
     }
 
     /**
+     * Get form where field is contained
+     *
+     * @return Rabbit_Form
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+    
+    /**
      * Get field label
      *
      * @return string

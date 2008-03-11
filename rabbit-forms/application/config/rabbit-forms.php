@@ -38,3 +38,18 @@ $config['rabbit-yml-classpath'] = array(APPPATH . 'rabbit-forms/forms/');
  * Configure Validator paths
  */
 $config['rabbit-validator-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit/Validator/');
+
+/**
+ * Default configuration
+ */
+$config['rabbit-default-settings'] = array(
+	'form' => array(
+		'primary_key' => 'id'
+	),
+	
+	'view' => array(
+		'template' => 'rabbit-forms/view_linear'
+	),
+	
+	'redirect' => ''
+);

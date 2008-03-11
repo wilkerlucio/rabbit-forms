@@ -22,19 +22,28 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-?>
-<?= $form_open ?>
-<?php foreach($fields as $field): ?>
-<div style="float: left; width: <?= $params->get('label_width', '200') ?>px;">
-    <?= $field['label'] ?>:
-</div>
-<div style="float: left; width: 500px;">
-<?= $field['component'] ?>
-</div>
-<div style="color: #f00;">
-    <?= $field['validation'] ?>
-</div>
-<hr style="clear: both; margin-top: 5px;" />
-<?php endforeach; ?>
-<button type="submit">Enviar</button>
-<?= $form_close ?>
+/**
+ * Fuse array content
+ *
+ * @param array $array1
+ * @param array $array2
+ * @return void
+ */
+function rabbit_array_merge(array $array1, array $array2)
+{
+	foreach($array2 as $k => $v) {
+		if(gettype($v) == 'array') {
+			if(!isset($array1[$k]) || gettype($array1[$k]) != 'array') {
+				$array1[$k] = array();
+			}
+			
+			$array1[$k] = rabbit_array_merge($array1[$k], $v);
+			
+			continue;
+		}
+		
+		$array1[$k] = $v;
+	}
+	
+	return $array1;
+}
