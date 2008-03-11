@@ -32,4 +32,9 @@ $config['rabbit-fields-classpath'] = array(APPPATH . 'rabbit-forms/Rabbit/Field/
 /**
  * Configure YAML paths
  */
-$config['rabbit-yaml-classpath'] = array(APPPATH . 'rabbit-form-config/');
+$config['rabbit-yml-classpath'] = array(APPPATH . 'rabbit-form-config/');
+
+/**
+ * Configure Validator paths
+ */
+$config['rabbit-validator-classpath'] = array(APPPATH . 'rabbit-forms/Rabbit/Validator/');

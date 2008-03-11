@@ -94,6 +94,22 @@ class Rabbit_Form
     }
 
     /**
+     * Get specifiq field
+     *
+     * @param string $name
+     */
+    public function getField($name)
+    {
+        foreach($this->fields as $field) {
+            if($field->getName() == $name) {
+                return $field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get open tag of form
      *
      * @return string
@@ -101,7 +117,7 @@ class Rabbit_Form
     public function getOpenTag()
     {
         return sprintf('<form action="%s" method="post">',
-                       $_SERVER['PHP_SELF']);
+                       $_SERVER['REQUEST_URI']);
     }
 
     /**
@@ -127,13 +143,109 @@ class Rabbit_Form
 
         foreach($this->fields as $field) {
             $data['fields'][] = array(
-                'label'     => $field->getLabel(),
-                'component' => $field->getFieldHtml()
+                'label'      => $field->getLabel(),
+                'component'  => $field->getFieldHtml(),
+                'validation' => $field->getValidationMessage()
             );
         }
 
         $data['form_close'] = $this->getCloseTag();
 
         return $data;
+    }
+
+    /**
+     * Validate form and fields
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        foreach($this->fields as $field) {
+            if($field->validate() == false) {
+                return false;
+            }
+        }
+
+        return $this->formValidate();
+    }
+
+    /**
+     * Validate form at all
+     *
+     * Extends this method to apply a custom form validation
+     *
+     * @return boolean
+     */
+    public function formValidate()
+    {
+        return true;
+    }
+
+    /**
+     * Enter description here...
+     *
+     */
+    public function getFieldsData()
+    {
+        $data = array();
+
+        foreach($this->fields as $field) {
+            $data[$field->getName()] = $field->getRawValue();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Save data into database
+     *
+     * @return void
+     */
+    public function saveData()
+    {
+        foreach($this->fields as $field) {
+            $field->preInsert();
+            $field->preChange();
+        }
+
+        $ci = get_instance();
+        $ci->load->database();
+
+        $data = $this->getFieldsData();
+
+        $ci->db->insert($this->table, $data);
+
+        foreach($this->fields as $field) {
+            $field->postInsert();
+            $field->postChange();
+        }
+    }
+
+    /**
+     * Edit data in database
+     *
+     * @param string $primary_key
+     * @param string $id
+     * @return void
+     */
+    public function editData($primary_key, $id)
+    {
+        foreach($this->fields as $field) {
+            $field->preUpdate();
+            $field->preChange();
+        }
+
+        $ci = get_instance();
+        $ci->load->database();
+
+        $data = $this->getFieldsData();
+
+        $ci->db->where($primary_key, $id)->update($this->table, $data);
+
+        foreach($this->fields as $field) {
+            $field->postUpdate();
+            $field->postChange();
+        }
     }
 }

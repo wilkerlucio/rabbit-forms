@@ -1,16 +1,19 @@
 form:
     table: content
+    primary_key: id
     fields:
         title:
             type: TextBox
             label: Título
             params:
                 style: 'width: 300px'
+            validators:
+                - type: Required
         content:
             type: TextArea
             label: Conteúdo
-            value: Start Value
 view:
     template: rabbit-forms/view_linear.php
     params:
         label_width: 200
+redirect: ''

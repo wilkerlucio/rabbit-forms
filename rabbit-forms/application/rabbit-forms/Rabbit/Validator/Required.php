@@ -22,12 +22,30 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Main extends Controller
+class Rabbit_Validator_Required extends Rabbit_Validator
 {
-    public function index($id = false)
+    /**
+     * @see Rabbit_Validator::validate()
+     *
+     * @return boolean
+     */
+    function validate()
     {
-        $this->load->library('rabbitform');
+        $value = $this->field->getRawValue();
 
-        echo $this->rabbitform->run('test.yml', $id);
+        if($this->getParam('notrim', false) === false) {
+            $value = trim($value);
+        }
+
+        if(!$value) {
+            $this->message = sprintf(
+                'O campo %s é obrigatório',
+                $this->field->getLabel()
+            );
+
+            return false;
+        }
+
+        return true;
     }
 }

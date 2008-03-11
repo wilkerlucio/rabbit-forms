@@ -70,6 +70,20 @@ abstract class Rabbit_Field
     protected $attributes = array();
 
     /**
+     * Validators to apply into field
+     *
+     * @var array
+     */
+    protected $validators = array();
+
+    /**
+     * Last validation message
+     *
+     * @var string
+     */
+    protected $validation_message;
+
+    /**
      * Construct a new field
      *
      * @param Rabbit_Form $form
@@ -206,6 +220,45 @@ abstract class Rabbit_Field
     final public function setRawValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * Add a validator to the field
+     *
+     * @param Rabbit_Validator $validator
+     * @return void
+     */
+    public function addValidator(Rabbit_Validator $validator)
+    {
+        $this->validators[] = $validator;
+    }
+
+    /**
+     * Get last validation message
+     *
+     * @return string
+     */
+    public function getValidationMessage()
+    {
+        return $this->validation_message;
+    }
+
+    /**
+     * Validate field data
+     *
+     * @return boolean
+     */
+    public function validate()
+    {
+        foreach($this->validators as $validator) {
+            if(!$validator->validate()) {
+                $this->validation_message = $validator->getMessage();
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /*

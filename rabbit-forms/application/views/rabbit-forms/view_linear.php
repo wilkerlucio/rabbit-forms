@@ -27,8 +27,14 @@
 <?php foreach($fields as $field): ?>
 <div style="float: left; width: <?= $view_params['label_width'] ?>px;">
     <?= $field['label'] ?>:
-</div> <?= $field['component'] ?>
-<hr />
+</div>
+<div style="float: left; width: 500px;">
+<?= $field['component'] ?>
+</div>
+<div style="color: #f00;">
+    <?= $field['validation'] ?>
+</div>
+<hr style="clear: both; margin-top: 5px;" />
 <?php endforeach; ?>
 <button type="submit">Enviar</button>
 <?= $form_close ?>
