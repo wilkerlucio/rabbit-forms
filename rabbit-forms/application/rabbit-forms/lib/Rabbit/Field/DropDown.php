@@ -27,18 +27,8 @@
  *
  * Use "items" attribute to set options
  */
-class Rabbit_Field_DropDown extends Rabbit_Field
+class Rabbit_Field_DropDown extends Rabbit_Field_List
 {
-    /**
-     * Get options of dropdown
-     *
-     * @return array
-     */
-    public function getItems()
-    {
-        return $this->getAttribute('items', array());
-    }
-
     /**
      * @see Rabbit_Field::loadAssets()
      *
@@ -63,6 +53,8 @@ class Rabbit_Field_DropDown extends Rabbit_Field
 
         $attr['id']   = $this->getName();
         $attr['name'] = $this->getName();
+        $attr['class'] = $this->getAttribute('class', '');
+        $attr['style'] = $this->getAttribute('style', '');
 
         if($this->getAttribute('updateField') !== null) {
             $update = $this->getAttribute('updateField');

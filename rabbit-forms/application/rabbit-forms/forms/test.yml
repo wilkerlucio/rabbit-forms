@@ -1,5 +1,7 @@
 form:
     table: content
+    hidden:
+        id: 321
     fields:
         title:
             type: TextBox
@@ -17,18 +19,58 @@ form:
                 - type: Length
                   params:
                       min: 50
+        sexo:
+            type: DropDown
+            label: Sexo
+            persist: false
+            params:
+                items:
+                    '': Selecione
+                    M: Masculino
+                    F: Feminino
+        check:
+            type: CheckBox
+            label: CheckBox
+        departamentos:
+            type: RadioGroup
+            label: Departamentos
+            params:
+                dbsource:
+                    table: var_types
+                    value: name
+                    title: type
+                    orderby: type
+        types:
+            type: CheckBoxGroup
+            label: Tipos
+            params:
+                dbsource:
+                    table: var_types
+                    value: name
+                    title: type
+                    orderby: type
+        fromdb
+            type: DropDown
+            label: From DB
+            params:
+                dbsource:
+                    table: var_types
+                    value: name
+                    title: type
+                    orderby: type
         numeros:
             type: DropDown
             label: Numero
             persist: false
             params:
                 items:
-                    - 0
-                    - 1
-                    - 2
-                    - 3
-                    - 4
-                    - 5
+                    '': 'Selecione'
+                    '0': 0
+                    '1': 1
+                    '2': 2
+                    '3': 3
+                    '4': 4
+                    '5': 5
                 updateField:
                     target: numeros2
                     url: main/dropdownGet
@@ -64,6 +106,9 @@ form:
                 - type: Compare
                   params:
                       compareTo: password
+        attach:
+            type: File
+            label: Anexo
 list:
     fields:
         -title

@@ -77,6 +77,13 @@ class Rabbit_Form
     protected $clientExec = array();
 
     /**
+     * Hidden fields of form
+     *
+     * @var array
+     */
+    protected $hiddenFields = array();
+
+    /**
      * Create a new form
      *
      * @param string $table
@@ -100,6 +107,87 @@ class Rabbit_Form
     public function setGenerateAssets($generateAssets)
     {
         $this->generateAssets = $generateAssets;
+    }
+
+    /**
+     * Add hidden field to form
+     *
+     * @param string $name
+     * @param string $value
+     * @return void
+     */
+    public function addHiddenField($name, $value)
+    {
+        $this->hiddenFields[] = array('name' => $name, 'value' => $value);
+    }
+
+    /**
+     * Remove hidden field from form
+     *
+     * @param string $name
+     * @return void
+     */
+    public function removeHiddenField($name)
+    {
+        $hiddens = array();
+
+        foreach($this->hiddenFields as $hidden) {
+            if($hidden['name'] != $name) {
+                $hiddens[] = $hidden;
+            }
+        }
+
+        $this->hiddenFields = $hiddens;
+    }
+
+    /**
+     * Get a especifique hidden field
+     *
+     * @param string $name
+     * @return array | null
+     */
+    public function getHiddenField($name)
+    {
+        foreach($this->hiddenFields as $hidden) {
+            if($hidden['name'] == $name) {
+                return $hidden;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get form hidden fields
+     *
+     * @return array
+     */
+    public function getHiddenFields()
+    {
+        return $this->hiddenFields;
+    }
+
+    /**
+     * Get hidden fields form string
+     *
+     * @return string
+     */
+    public function generateHidden()
+    {
+        $output = '';
+        $pattern = '<input type="hidden" name="%s" value="%s" />';
+
+        foreach($this->getHiddenFields() as $hidden) {
+            $output .= sprintf(
+                $pattern,
+                $hidden['name'],
+                $hidden['value']
+            );
+
+            $output .= "\n";
+        }
+
+        return $output;
     }
 
     /**
@@ -175,6 +263,7 @@ class Rabbit_Form
         }
 
         $ci =& get_instance();
+        $ci->load->helper('url');
 
         $patterns = array(
             'js'  => '<script type="text/javascript" src="%s"></script>',
@@ -184,7 +273,7 @@ class Rabbit_Form
         $output = "";
 
         foreach($this->assets as $asset) {
-            $url  = $ci->config->item('rabbit-assets') . $asset;
+            $url  = base_url() . $ci->config->item('rabbit-assets') . $asset;
             $info = pathinfo($asset);
             $ext  = strtolower($info['extension']);
 
@@ -201,7 +290,7 @@ class Rabbit_Form
      */
     public function getOpenTag()
     {
-        return sprintf('<form action="%s" method="post">',
+        return sprintf('<form action="%s" method="post">' . "\n",
                        $_SERVER['REQUEST_URI']);
     }
 
@@ -230,7 +319,7 @@ class Rabbit_Form
      */
     public function getCloseTag()
     {
-        return '</form>';
+        return "</form>\n";
     }
 
     /**
@@ -241,7 +330,7 @@ class Rabbit_Form
     public function generate()
     {
         $data['form_open']   = $this->getOpenTag();
-        $data['fields'] = array();
+        $data['fields']      = array();
 
         foreach($this->fields as $field) {
             $field->loadAssets();
@@ -253,6 +342,7 @@ class Rabbit_Form
         }
 
         $data['form_close']  = $this->getCloseTag();
+        $data['form_hidden'] = $this->generateHidden();
         $data['form_assets'] = $this->getAssetsOutput();
         $data['form_exec']   = $this->getPostExec();
 
@@ -290,12 +380,20 @@ class Rabbit_Form
     }
 
     /**
-     * Enter description here...
+     * Get array containg data of fields
      *
+     * @return array
      */
     public function getFieldsData()
     {
+        $ci =& get_instance();
+        $ci->load->helper('rabbit');
+
         $data = array();
+
+        foreach($this->getHiddenFields() as $hidden) {
+            $data[$hidden['name']] = $hidden['value'];
+        }
 
         foreach($this->fields as $field) {
             if($field->getPersist() == true) {
@@ -303,7 +401,7 @@ class Rabbit_Form
             }
         }
 
-        return $data;
+        return rabbit_filter_db_data($this->table, $data);
     }
 
     /**
@@ -324,10 +422,11 @@ class Rabbit_Form
         $data = $this->getFieldsData();
 
         $ci->db->insert($this->table, $data);
+        $id = $ci->db->insert_id();
 
         foreach($this->fields as $field) {
-            $field->postInsert();
-            $field->postChange();
+            $field->postInsert($id);
+            $field->postChange($id);
         }
     }
 
@@ -341,8 +440,8 @@ class Rabbit_Form
     public function editData($primary_key, $id)
     {
         foreach($this->fields as $field) {
-            $field->preUpdate();
-            $field->preChange();
+            $field->preUpdate($id);
+            $field->preChange($id);
         }
 
         $ci =& get_instance();
@@ -353,8 +452,8 @@ class Rabbit_Form
         $ci->db->where($primary_key, $id)->update($this->table, $data);
 
         foreach($this->fields as $field) {
-            $field->postUpdate();
-            $field->postChange();
+            $field->postUpdate($id);
+            $field->postChange($id);
         }
     }
 }

@@ -22,11 +22,9 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/**
- * Simple text area
- */
-class Rabbit_Field_TextArea extends Rabbit_Field
+class Rabbit_Field_File extends Rabbit_Field
 {
+
     /**
      * @see Rabbit_Field::getFieldHtml()
      *
@@ -37,16 +35,16 @@ class Rabbit_Field_TextArea extends Rabbit_Field
         $ci =& get_instance();
         $ci->load->helper('rabbit');
 
+        $attr['type']  = 'file';
+        $attr['id']    = $this->getName();
         $attr['name']  = $this->getName();
-        $attr['value'] = $this->getAttribute('mode') == 'password' ? '' : $this->getValue();
+        $attr['value'] = $this->getValue();
         $attr['class'] = $this->getAttribute('class', '');
         $attr['style'] = $this->getAttribute('style', '');
-        $attr['id']    = $this->getName();
 
         return sprintf(
-        	'<textarea %s>%s</textarea>',
-            rabbit_attributes_build($attr),
-            $this->getValue()
+            '<input %s />',
+            rabbit_attributes_build($attr)
         );
     }
 }

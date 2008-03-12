@@ -58,8 +58,6 @@ class Rabbit_Field_TextBox extends Rabbit_Field
         $ci =& get_instance();
         $ci->load->helper('rabbit');
 
-        $attr = array();
-
         $attr['type']  = $this->getAttribute('mode', 'text');
         $attr['name']  = $this->getName();
         $attr['value'] = $this->getAttribute('mode') == 'password' ? '' : $this->getValue();

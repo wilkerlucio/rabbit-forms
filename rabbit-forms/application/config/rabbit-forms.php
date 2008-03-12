@@ -22,7 +22,7 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/*
+/**
  * Configure plugins paths
  *
  * This array contains the paths to search for form plugins
@@ -57,5 +57,21 @@ $config['rabbit-default-settings'] = array(
 
 /**
  * Assets path
+ *
+ * ps: this variable will be prefixed with base_url() before use
  */
-$config['rabbit-assets'] = './rabbit-assets/';
+$config['rabbit-assets'] = 'rabbit-assets/';
+
+/**
+ * Upload files base path (path to send)
+ *
+ * ps: this variable will be prefixed with base_url() before use
+ */
+$config['rabbit-upload-path'] = 'rabbit-files/';
+
+/**
+ * Upload files base path (path to reach)
+ *
+ * ps: this variable will be prefixed with base_url() before use
+ */
+$config['rabbit-upload'] = 'rabbit-files/';

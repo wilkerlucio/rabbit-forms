@@ -26,9 +26,12 @@ class Main extends Controller
 {
     public function index($id = false)
     {
+        $this->output->enable_profiler(true);
         $this->load->library('rabbitform');
 
-        echo $this->rabbitform->run('test.yml', $id);
+        //echo $this->rabbitform->run('test.yml', $id);
+        echo $this->rabbitform->run('f1.yml', $id);
+        echo $this->rabbitform->run('f1.yml', $id);
     }
 
     public function dropdownGet()

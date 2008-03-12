@@ -29,6 +29,7 @@ require_once(APPPATH . 'rabbit-forms/lib/spyc.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Container.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Form.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/List.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/Factory.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Validator.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Validator/Factory.php');
@@ -44,6 +45,7 @@ class Rabbitform
      * @var unknow
      */
     private $ci;
+    private $serial_counter = 0;
 
     /**
      * Initialize class
@@ -53,6 +55,17 @@ class Rabbitform
         $this->ci =& get_instance();
         $this->ci->config->load('rabbit-forms');
         $this->ci->load->helper('rabbit');
+    }
+
+    /**
+     * Generate form ID based on config
+     *
+     * @param array $config
+     * @return string
+     */
+    protected function getFormIdentifier(array $config)
+    {
+        return md5($this->serial_counter . serialize($config));
     }
 
     /**
@@ -133,6 +146,17 @@ class Rabbitform
         $form = new Rabbit_Form($config['form']['table']);
         $form->setGenerateAssets($config['form']['automatic_assets']);
 
+        //parse hiddens
+        if(isset($config['form']['hidden'])) {
+            foreach($config['form']['hidden'] as $name => $value) {
+                $form->addHiddenField($name, $value);
+            }
+        }
+
+        //add hidden form indentifier
+        //TODO implement a more unique identifier method
+        $form->addHiddenField('rabbit-form-id', $this->getFormIdentifier($config));
+
         //parse fields
         foreach($config['form']['fields'] as $name => $field) {
             $f = Rabbit_Field_Factory::factory($field['type'], $form);
@@ -182,12 +206,28 @@ class Rabbitform
      */
     public function run($config, $id = false)
     {
+        //increment serial (avoid form)
+        $this->serial_counter += 1;
+
+        //load config
+        $this->ci->benchmark->mark('rabbit_load_config_start');
         $config = $this->prepare_config($config);
-        $edit   = $this->prepare_edit($config, $id);
-        $form   = $this->prepare_form($config, $edit);
+        $this->ci->benchmark->mark('rabbit_load_config_end');
+
+        //load edit data
+        $this->ci->benchmark->mark('rabbit_load_edit_start');
+        $edit = $this->prepare_edit($config, $id);
+        $this->ci->benchmark->mark('rabbit_load_edit_end');
+
+        //prepare form
+        $this->ci->benchmark->mark('rabbit_prepare_form_start');
+        $form = $this->prepare_form($config, $edit);
+        $this->ci->benchmark->mark('rabbit_prepare_form_end');
+
+        $check  = $this->ci->input->post('rabbit-form-id') == $this->getFormIdentifier($config);
 
         //if post, try to validate, if validated, send data
-        if(count($_POST) > 0 && $form->validate()) {
+        if($check && $form->validate()) {
             if($id === false) {
                 $form->saveData();
             } else {
@@ -200,7 +240,10 @@ class Rabbitform
 
             return '';
         } else {
+            $this->ci->benchmark->mark('rabbit_form_generate_data_start');
             $data = $form->generate();
+            $this->ci->benchmark->mark('rabbit_form_generate_data_end');
+
             $data['params'] = new Rabbit_Container();
 
             if(isset($config['view']['params'])) {

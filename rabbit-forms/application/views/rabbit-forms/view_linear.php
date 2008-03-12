@@ -26,7 +26,7 @@
 <style type="text/css">
 
 .rabbit-field-container {
-    background: #eef;
+    background: #efe;
     margin: 10px 0;
     padding: 10px;
 }
@@ -52,6 +52,7 @@
 </style>
 <?= $form_assets ?>
 <?= $form_open ?>
+<?= $form_hidden ?>
 <?php foreach($fields as $field): ?>
 <div class="rabbit-field-container">
     <div class="rabbit-field-label"><?= $field['label'] ?>:</div>

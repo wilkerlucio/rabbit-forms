@@ -49,7 +49,7 @@ function rabbit_array_merge(array $array1, array $array2)
 }
 
 /**
- * Enter description here...
+ * Filter field list of table
  *
  * @param string $table
  * @param array $data
@@ -72,6 +72,28 @@ function rabbit_filter_fields($table, array $data) {
 }
 
 /**
+ * Filter array of data to save, letting only the valid fields stay
+ *
+ * @param string $table
+ * @param array $data
+ * @return array
+ */
+function rabbit_filter_db_data($table, $data)
+{
+    $ci =& get_instance();
+
+    $out = array();
+    $fields = $ci->db->list_fields($table);
+
+    foreach($fields as $field)
+        if(isset($data[$field]))
+            $out[$field] = $data[$field];
+
+    return $out;
+}
+
+
+/**
  * Build attributes string based on array data
  *
  * @param array $data
@@ -82,7 +104,7 @@ function rabbit_attributes_build(array $data)
     $attributes = array();
 
     foreach($data as $k => $v) {
-        $attributes[] = $k . ' = "' . $v . '"';
+        $attributes[] = $k . '="' . $v . '"';
     }
 
     return implode(" ", $attributes);
