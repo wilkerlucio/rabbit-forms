@@ -24,12 +24,31 @@
 
 class Main extends Controller
 {
-    public function index($id = false)
+    public function __construct()
     {
+        parent::Controller();
+
         $this->output->enable_profiler(true);
         $this->load->library('rabbitform');
+    }
 
+    public function index($id = false)
+    {
         echo $this->rabbitform->run('test.yml', $id);
+    }
+
+    public function retrive()
+    {
+        echo $this->rabbitform->retrive('test.yml');
+    }
+
+    public function delete($id)
+    {
+        $this->load->helper('url');
+
+        $this->rabbitform->delete('test.yml', $id);
+
+        redirect('main/retrive');
     }
 
     public function dropdownGet()

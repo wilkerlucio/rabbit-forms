@@ -113,7 +113,7 @@ class Rabbitform
 
         if($id !== false && count($_POST) == 0) {
             $fields = rabbit_filter_fields(
-                $config['form']['table'],
+                $config['table'],
                 array_keys($config['fields'])
             );
 
@@ -124,8 +124,8 @@ class Rabbitform
             $edit = $this->ci->db->query(sprintf(
                 "select %s from %s where %s = '%s'",
                 $fields,
-                $config['form']['table'],
-                $config['form']['primary_key'],
+                $config['table'],
+                $config['primary_key'],
                 $id
             ))->row_array();
         }
@@ -143,9 +143,9 @@ class Rabbitform
     public function prepare_form(array $config, array $defaults = array())
     {
     	//create form
-        $form = new Rabbit_Form($config['form']['table']);
+        $form = new Rabbit_Form($config['table']);
         $form->setGenerateAssets($config['form']['automatic_assets']);
-        $form->setPrimaryKey($config['form']['primary_key']);
+        $form->setPrimaryKey($config['primary_key']);
 
         //parse hiddens
         if(isset($config['form']['hidden'])) {
@@ -210,19 +210,13 @@ class Rabbitform
         $this->serial_counter += 1;
 
         //load config
-        $this->ci->benchmark->mark('rabbit_load_config_start');
         $config = $this->prepare_config($config);
-        $this->ci->benchmark->mark('rabbit_load_config_end');
 
         //load edit data
-        $this->ci->benchmark->mark('rabbit_load_edit_start');
         $edit = $this->prepare_edit($config, $id);
-        $this->ci->benchmark->mark('rabbit_load_edit_end');
 
         //prepare form
-        $this->ci->benchmark->mark('rabbit_prepare_form_start');
         $form = $this->prepare_form($config, $edit);
-        $this->ci->benchmark->mark('rabbit_prepare_form_end');
 
         $check  = $this->ci->input->post('rabbit-form-id') == $this->getFormIdentifier($config);
 
@@ -231,7 +225,7 @@ class Rabbitform
             if($id === false) {
                 $form->saveData();
             } else {
-                $form->editData($config['form']['primary_key'], $id);
+                $form->editData($id);
             }
 
             $this->ci->load->helper('url');
@@ -240,21 +234,117 @@ class Rabbitform
 
             return '';
         } else {
-            $this->ci->benchmark->mark('rabbit_form_generate_data_start');
             $data = $form->generate();
-            $this->ci->benchmark->mark('rabbit_form_generate_data_end');
 
-            $data['params'] = new Rabbit_Container();
+            return $this->loadView($config['form']['view'], $data);
+        }
+    }
 
-            if(isset($config['view']['params'])) {
-                $data['params']->setData($config['view']['params']);
+    /**
+     * Get a list o data from table
+     *
+     * @param mixed $config
+     * @return string
+     */
+    public function retrive($config)
+    {
+        $this->ci->load->database();
+        $this->ci->load->helper('url');
+
+        $config = $this->prepare_config($config);
+        $data = array();
+
+        //base data
+        $data['manage']  = $config['retrive']['manage'];
+        $data['delete']  = $config['retrive']['delete'];
+        $data['kfields'] = $config['retrive']['fields'];
+
+        //create form
+        $form = new Rabbit_Form($config['table']);
+        $form->setGenerateAssets($config['form']['automatic_assets']);
+        $form->setPrimaryKey($config['primary_key']);
+
+        //load field headers
+        $fields = $config['retrive']['fields'];
+        $data['fields']  = array();
+
+        foreach($fields as $field) {
+            $data['fields'][$field] = $config['fields'][$field]['label'];
+        }
+
+        //load fields skeleton
+        $skeletons = array();
+
+        foreach($fields as $field) {
+            $skeletons[$field] = Rabbit_Field_Factory::factory($config['fields'][$field]['type'], $form);
+        }
+
+        //load rows of data
+        $data['rows'] = array();
+
+        $rows = $this->ci->db->query(sprintf(
+            'select `%s`, `%s` from %s',
+            $config['primary_key'],
+            implode('`,`', $fields),
+            $config['table']
+        ))->result_array();
+
+        foreach($rows as $row) {
+            $line = array();
+            $line['rabbit_row_id'] = $row[$config['primary_key']];
+
+            foreach($skeletons as $field => $skeleton) {
+                $skeleton->setRawValue($row[$field]);
+                $line[$field] = $skeleton->getShortValue();
             }
 
-            return $this->ci->load->view(
-            	$config['view']['template'],
-                $data,
-                true
-            );
+            $data['rows'][] = $line;
         }
+
+        //return data
+        return $this->loadView($config['retrive']['view'], $data);
+    }
+
+    /**
+     * Delete item from database
+     *
+     * @param unknown_type $config
+     * @param unknown_type $id
+     */
+    public function delete($config, $id)
+    {
+        //load config
+        $config = $this->prepare_config($config);
+
+        //load edit data
+        $edit = $this->prepare_edit($config, $id);
+
+        //prepare form
+        $form = $this->prepare_form($config, $edit);
+
+        //delete action
+        $form->deleteData($id);
+    }
+
+    /**
+     * Load view and retrive result html
+     *
+     * @param array $config config of view
+     * @param array $data data to display
+     * @return string
+     */
+    protected function loadView($config, $data)
+    {
+        $data['params'] = new Rabbit_Container();
+
+        if(isset($config['params'])) {
+            $data['params']->setData($config['params']);
+        }
+
+        return $this->ci->load->view(
+            $config['template'],
+            $data,
+            true
+        );
     }
 }

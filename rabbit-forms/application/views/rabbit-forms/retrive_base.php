@@ -22,29 +22,25 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Rabbit_Validator_Email extends Rabbit_Validator
-{
-    /**
-     * @see Rabbit_Validator::validate()
-     *
-     * @return boolean
-     */
-    public function validate()
-    {
-        $ci =& get_instance();
-        $ci->lang->load('rabbit');
-
-        $value = $this->field->getRawValue();
-
-        if(!preg_match("/^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$/ix", $value)) {
-            $this->message = sprintf(
-                $ci->lang->line('rabbit_valid_email'),
-                $this->field->getLabel()
-            );
-
-            return false;
-        }
-
-        return true;
-    }
-}
+?>
+<table>
+    <thead>
+        <tr>
+            <?php foreach($fields as $field): ?>
+            <th><?= $field ?></th>
+            <?php endforeach; ?>
+            <th colspan="2"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($rows as $row): ?>
+        <tr>
+            <?php foreach($kfields as $field): ?>
+            <th><?= $row[$field] ?></th>
+            <?php endforeach; ?>
+            <th><a href="<?= site_url($manage . $row['rabbit_row_id']) ?>" />editar</a></th>
+            <th><a href="<?= site_url($delete . $row['rabbit_row_id']) ?>" />delete</a></th>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

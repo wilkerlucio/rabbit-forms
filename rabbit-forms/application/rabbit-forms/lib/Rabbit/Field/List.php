@@ -31,11 +31,11 @@ abstract class Rabbit_Field_List extends Rabbit_Field
      */
     public function getItems()
     {
-        $items = $this->getAttribute('items', null);
+        $items      = $this->getAttribute('items', null);
+        $controller = $this->getAttribute('controllersource', null);
+        $db         = $this->getAttribute('dbsource', null);
 
         if($items === null) {
-            $db = $this->getAttribute('dbsource', null);
-
             if($db !== null) {
                 $table = $db['table'];
                 $title = $db['title'];
@@ -56,6 +56,8 @@ abstract class Rabbit_Field_List extends Rabbit_Field
                 foreach($data as $row) {
                     $items[$row[$value]] = $row[$title];
                 }
+            } elseif($controller !== null) {
+                //TODO: implement controller source
             } else {
                 $items = array();
             }

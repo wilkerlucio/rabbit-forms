@@ -25,6 +25,20 @@
 class Rabbit_Field_File extends Rabbit_Field
 {
     /**
+     * Return path of folder that contains files
+     *
+     * @return string
+     */
+    protected function baseFilePath()
+    {
+        $ci =& get_instance();
+
+        return   $ci->config->item('rabbit-upload-path')
+               . $this->form->getTable()
+               . '/';
+    }
+
+    /**
      * Detect if a file of field is uploaded or not
      *
      * @return boolean
@@ -32,19 +46,19 @@ class Rabbit_Field_File extends Rabbit_Field
     protected function hasUpload()
     {
         $file = $_FILES[$this->getName()];
-        
+
         if($file['tmp_name']) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     /**
      * @see Rabbit_Field::preUpdate()
      *
      * If a new upload is sent on edit, remove the previous (if exists)
-     * 
+     *
      * @param string $id
      */
     public function preUpdate($id)
@@ -52,7 +66,7 @@ class Rabbit_Field_File extends Rabbit_Field
         if($this->hasUpload()) {
             $ci =& get_instance();
             $ci->load->database();
-            
+
             $data = $ci->db->query(sprintf(
                 "select %s from %s where %s = '%s'",
                 $this->getName(),
@@ -60,15 +74,15 @@ class Rabbit_Field_File extends Rabbit_Field
                 $this->getForm()->getPrimaryKey(),
                 $id
             ))->row_array();
-            
-            $path = $ci->config->item('rabbit-upload-path') . $id . '_' . $data[$this->getName()];
-            
+
+            $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
+
             if(file_exists($path)) {
                 unlink($path);
             }
         }
     }
-    
+
     /**
      * @see Rabbit_Field::preChange()
      *
@@ -80,7 +94,7 @@ class Rabbit_Field_File extends Rabbit_Field
             $this->getForm()->addHiddenField($this->getName(), $_FILES[$this->getName()]['name']);
         }
     }
-    
+
     /**
      * @see Rabbit_Field::postChange()
      *
@@ -91,20 +105,49 @@ class Rabbit_Field_File extends Rabbit_Field
         //check for file sent
         if($this->hasUpload()) {
             $this->getForm()->removeHiddenField($this->getName());
-            
-            $ci =& get_instance();
-            
+
             $file = $_FILES[$this->getName()];
-            
+
             //add new file
-            $path = $ci->config->item('rabbit-upload-path') . $id . '_' . $file['name'];
-            
+            $path = $this->baseFilePath();
+
+            //make dir if not exists
+            if(!is_dir($path)) {
+                mkdir($path);
+            }
+
+            $path .= $id . '_' . $file['name'];
+
             if(!move_uploaded_file($file['tmp_name'], $path)) {
                 show_error('Error sending file, please check upload path and permissions');
             }
         }
     }
-    
+
+    /**
+     * @see Rabbit_Field::postDelete()
+     *
+     * @param string $id
+     */
+    public function preDelete($id)
+    {
+        $ci =& get_instance();
+
+        $data = $ci->db->query(sprintf(
+            "select %s from %s where %s = '%s'",
+            $this->getName(),
+            $this->getForm()->getTable(),
+            $this->getForm()->getPrimaryKey(),
+            $id
+        ))->row_array();
+
+        $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
+
+        if(file_exists($path)) {
+            unlink($path);
+        }
+    }
+
     /**
      * @see Rabbit_Field::getFieldHtml()
      *

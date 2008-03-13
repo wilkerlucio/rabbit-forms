@@ -92,7 +92,6 @@ function rabbit_filter_db_data($table, $data)
     return $out;
 }
 
-
 /**
  * Build attributes string based on array data
  *

@@ -1,3 +1,4 @@
+table: content
 form:
     table: content
 fields:
@@ -41,7 +42,7 @@ fields:
                 value: name
                 title: type
                 orderby: type
-    fromdb
+    fromdb:
         type: DropDown
         label: From DB
         params:
@@ -76,10 +77,6 @@ fields:
         persist: false
         params:
             mask: 99/99/9999
-        validators:
-            - type: RegEx
-              params:
-                  pattern: /\d{2}\/\d{2}\/\d{4}/
     password:
         type: TextBox
         label: Senha
@@ -87,15 +84,30 @@ fields:
         params:
             mode: password
         validators:
-    password_config:
+    password_confirm:
         type: TextBox
         label: Confirmar Senha
         persist: false
         params:
             mode: password
+        validators:
+            - type: Compare
+              params:
+                  compareTo: password
     attach:
         type: File
         label: Anexo
-list:
+    timestart:
+        type: Date
+        label: Date Field
+        params:
+            options:
+                dateFormat: yy-mm-dd
+retrive:
+    manage: main/index/
+    delete: main/delete/
     fields:
         -title
+        -content
+        -attach
+redirect: 'main/retrive'

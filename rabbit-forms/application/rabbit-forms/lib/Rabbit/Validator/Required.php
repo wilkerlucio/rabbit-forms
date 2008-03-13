@@ -31,6 +31,9 @@ class Rabbit_Validator_Required extends Rabbit_Validator
      */
     public function validate()
     {
+        $ci =& get_instance();
+        $ci->lang->load('rabbit');
+
         $value = $this->field->getRawValue();
 
         if($this->getParam('notrim', false) === false) {
@@ -39,7 +42,7 @@ class Rabbit_Validator_Required extends Rabbit_Validator
 
         if(!$value) {
             $this->message = sprintf(
-                'The %s field is required.',
+                $ci->lang->line('rabbit_valid_required'),
                 $this->field->getLabel()
             );
 

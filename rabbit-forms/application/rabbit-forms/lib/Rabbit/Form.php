@@ -54,7 +54,7 @@ class Rabbit_Form
      * @var string
      */
     protected $table = '';
-    
+
     /**
      * Table primary key field
      *
@@ -115,7 +115,7 @@ class Rabbit_Form
     {
         $this->table = $table;
     }
-    
+
     /**
      * @return string
      */
@@ -131,7 +131,7 @@ class Rabbit_Form
     {
         $this->primaryKey = $primaryKey;
     }
-    
+
     /**
      * @return boolean
      */
@@ -257,7 +257,7 @@ class Rabbit_Form
      */
     public function getField($name)
     {
-        foreach($this->fields as $field) {
+        foreach($this->getFields() as $field) {
             if($field->getName() == $name) {
                 return $field;
             }
@@ -459,7 +459,7 @@ class Rabbit_Form
         $ci->load->database();
 
         $data = $this->getFieldsData();
-        
+
         $ci->db->insert($this->table, $data);
         $id = $ci->db->insert_id();
 
@@ -472,11 +472,10 @@ class Rabbit_Form
     /**
      * Edit data in database
      *
-     * @param string $primary_key
      * @param string $id
      * @return void
      */
-    public function editData($primary_key, $id)
+    public function editData($id)
     {
         foreach($this->fields as $field) {
             $field->preUpdate($id);
@@ -488,11 +487,38 @@ class Rabbit_Form
 
         $data = $this->getFieldsData();
 
-        $ci->db->where($primary_key, $id)->update($this->table, $data);
+        $ci->db->where($this->getPrimaryKey(), $id)->update($this->table, $data);
 
         foreach($this->fields as $field) {
             $field->postUpdate($id);
             $field->postChange($id);
+        }
+    }
+
+    /**
+     * Delete a data from db
+     *
+     * @param string $id
+     * @return void
+     */
+    public function deleteData($id)
+    {
+        foreach($this->fields as $field) {
+            $field->preDelete($id);
+        }
+
+        $ci =& get_instance();
+        $ci->load->database();
+
+        $ci->db->query(sprintf(
+            "delete from `%s` where `%s` = '%s'",
+            $this->getTable(),
+            $this->getPrimaryKey(),
+            $id
+        ));
+
+        foreach($this->fields as $field) {
+            $field->postDelete($id);
         }
     }
 }

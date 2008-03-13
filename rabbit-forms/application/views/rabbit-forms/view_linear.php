@@ -61,6 +61,6 @@
     <div class="rabbit-field-clear"></div>
 </div>
 <?php endforeach; ?>
-<button type="submit">Enviar</button>
+<button type="submit">OK</button>
 <?= $form_close ?>
 <?= $form_exec ?>
