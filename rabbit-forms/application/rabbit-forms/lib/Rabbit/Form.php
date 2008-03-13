@@ -54,6 +54,13 @@ class Rabbit_Form
      * @var string
      */
     protected $table = '';
+    
+    /**
+     * Table primary key field
+     *
+     * @var string
+     */
+    protected $primaryKey = '';
 
     /**
      * Fields of form
@@ -93,6 +100,38 @@ class Rabbit_Form
         $this->table = $table;
     }
 
+    /**
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getPrimaryKey()
+    {
+        return $this->primaryKey;
+    }
+
+    /**
+     * @param string $primary_key
+     */
+    public function setPrimaryKey($primaryKey)
+    {
+        $this->primaryKey = $primaryKey;
+    }
+    
     /**
      * @return boolean
      */
@@ -290,7 +329,7 @@ class Rabbit_Form
      */
     public function getOpenTag()
     {
-        return sprintf('<form action="%s" method="post">' . "\n",
+        return sprintf('<form action="%s" method="post" enctype="multipart/form-data">' . "\n",
                        $_SERVER['REQUEST_URI']);
     }
 
@@ -391,14 +430,14 @@ class Rabbit_Form
 
         $data = array();
 
-        foreach($this->getHiddenFields() as $hidden) {
-            $data[$hidden['name']] = $hidden['value'];
-        }
-
         foreach($this->fields as $field) {
             if($field->getPersist() == true) {
                 $data[$field->getName()] = $field->getRawValue();
             }
+        }
+
+        foreach($this->getHiddenFields() as $hidden) {
+            $data[$hidden['name']] = $hidden['value'];
         }
 
         return rabbit_filter_db_data($this->table, $data);
@@ -420,7 +459,7 @@ class Rabbit_Form
         $ci->load->database();
 
         $data = $this->getFieldsData();
-
+        
         $ci->db->insert($this->table, $data);
         $id = $ci->db->insert_id();
 

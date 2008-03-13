@@ -345,6 +345,7 @@ abstract class Rabbit_Field
     /**
      * Event dispatched after insert
      *
+     * @param string $id
      * @return void
      */
     public function postInsert()
@@ -355,6 +356,7 @@ abstract class Rabbit_Field
     /**
      * Event dispatched before update
      *
+     * @param string $id
      * @return void
      */
     public function preUpdate()
@@ -365,6 +367,7 @@ abstract class Rabbit_Field
     /**
      * Event dispatched after update
      *
+     * @param string $id
      * @return void
      */
     public function postUpdate()
@@ -387,6 +390,7 @@ abstract class Rabbit_Field
      * Event dispatched after record change (shortcut for insert and
      * update together)
      *
+     * @param string $id
      * @return void
      */
     public function postChange()
@@ -397,6 +401,7 @@ abstract class Rabbit_Field
     /**
      * Event dispatched before delete
      *
+     * @param string $id
      * @return void
      */
     public function preDelete()
@@ -407,6 +412,7 @@ abstract class Rabbit_Field
     /**
      * Event dispatched after delete
      *
+     * @param string $id
      * @return void
      */
     public function postDelete()

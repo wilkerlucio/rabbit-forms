@@ -114,7 +114,7 @@ class Rabbitform
         if($id !== false && count($_POST) == 0) {
             $fields = rabbit_filter_fields(
                 $config['form']['table'],
-                array_keys($config['form']['fields'])
+                array_keys($config['fields'])
             );
 
             $fields = implode(',', $fields);
@@ -145,6 +145,7 @@ class Rabbitform
     	//create form
         $form = new Rabbit_Form($config['form']['table']);
         $form->setGenerateAssets($config['form']['automatic_assets']);
+        $form->setPrimaryKey($config['form']['primary_key']);
 
         //parse hiddens
         if(isset($config['form']['hidden'])) {
@@ -154,11 +155,10 @@ class Rabbitform
         }
 
         //add hidden form indentifier
-        //TODO implement a more unique identifier method
         $form->addHiddenField('rabbit-form-id', $this->getFormIdentifier($config));
 
         //parse fields
-        foreach($config['form']['fields'] as $name => $field) {
+        foreach($config['fields'] as $name => $field) {
             $f = Rabbit_Field_Factory::factory($field['type'], $form);
             $f->setName($name);
             $f->setLabel($field['label']);
@@ -177,7 +177,7 @@ class Rabbitform
             if(isset($_POST[$name])) {           //check for post repopulate
                 $f->setValue($_POST[$name]);
             } elseif(isset($defaults[$name])) {  //check for predefined repopulate
-                $f->setValue($defaults[$name]);
+                $f->setRawValue($defaults[$name]);
             } elseif(isset($field['value'])) {   //check for config repopulate
                 $f->setValue($field['value']);
             }

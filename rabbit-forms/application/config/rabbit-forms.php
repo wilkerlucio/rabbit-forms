@@ -64,8 +64,6 @@ $config['rabbit-assets'] = 'rabbit-assets/';
 
 /**
  * Upload files base path (path to send)
- *
- * ps: this variable will be prefixed with base_url() before use
  */
 $config['rabbit-upload-path'] = 'rabbit-files/';
 

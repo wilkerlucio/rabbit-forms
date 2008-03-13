@@ -57,11 +57,13 @@ class Rabbit_Field_DropDown extends Rabbit_Field_List
         $attr['style'] = $this->getAttribute('style', '');
 
         if($this->getAttribute('updateField') !== null) {
+            $ci->load->helper('url');
+            
             $update = $this->getAttribute('updateField');
 
             $attr['onchange'] = sprintf(
                 "forwardSelect('%s', '%s', '%s')",
-                $update['url'],
+                site_url($update['url']),
                 $this->getName(),
                 $update['target']
             );
