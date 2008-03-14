@@ -23,33 +23,6 @@
  */
 
 ?>
-<style type="text/css">
-
-.rabbit-field-container {
-    background: #efe;
-    margin: 10px 0;
-    padding: 10px;
-}
-
-.rabbit-field-label {
-    float: left;
-    width: 180px;
-}
-
-.rabbit-field-component {
-    float: left;
-    width: 250px;
-}
-
-.rabbit-field-error {
-    color: #f00;
-}
-
-.rabbit-field-clear {
-    clear: both;
-}
-
-</style>
 <?= $form_assets ?>
 <?= $form_open ?>
 <?= $form_hidden ?>
