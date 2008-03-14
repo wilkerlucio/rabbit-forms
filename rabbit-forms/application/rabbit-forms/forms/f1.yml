@@ -1,8 +1,0 @@
-form:
-    table: content
-    fields:
-        name:
-            type: TextBox
-            label: Nome
-            validators:
-                - type: Required

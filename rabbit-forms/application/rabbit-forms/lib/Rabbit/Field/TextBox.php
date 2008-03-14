@@ -31,7 +31,7 @@ class Rabbit_Field_TextBox extends Rabbit_Field
      * @see Rabbit_Field::loadAssets()
      *
      */
-    public function loadAssets()
+    public function initialize()
     {
         if($this->getAttribute('mask') !== null) {
             $this->form->addAsset('jquery-1.2.3.pack.js');

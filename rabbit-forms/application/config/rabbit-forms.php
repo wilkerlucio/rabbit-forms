@@ -30,6 +30,13 @@
 $config['rabbit-fields-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit/Field/');
 
 /**
+ * Configure form paths
+ *
+ * This array contains the paths to search for form plugins
+ */
+$config['rabbit-form-classpath'] = array(APPPATH . 'rabbit-forms/lib/Rabbit/Form/');
+
+/**
  * Configure YAML paths
  */
 $config['rabbit-yml-classpath'] = array(APPPATH . 'rabbit-forms/forms/');

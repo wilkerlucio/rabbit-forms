@@ -28,7 +28,7 @@ class Rabbit_Field_Date extends Rabbit_Field
      * @see Rabbit_Field::loadAssets()
      *
      */
-    public function loadAssets()
+    public function initialize()
     {
         $this->form->addAsset('jquery-1.2.3.pack.js');
         $this->form->addAsset('ui.datepicker.js');

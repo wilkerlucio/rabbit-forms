@@ -103,7 +103,6 @@ abstract class Rabbit_Field
         $this->form->addField($this);
 
         $this->setAttributes($attributes);
-        $this->initialize();
     }
 
     /**
@@ -111,16 +110,7 @@ abstract class Rabbit_Field
      *
      * @return void
      */
-    protected function initialize()
-    {
-    }
-
-    /**
-     * Overload this method to load field assets
-     *
-     * @return void
-     */
-    public function loadAssets()
+    public function initialize()
     {
     }
 

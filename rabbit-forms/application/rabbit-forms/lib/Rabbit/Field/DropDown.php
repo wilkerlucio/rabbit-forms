@@ -30,10 +30,10 @@
 class Rabbit_Field_DropDown extends Rabbit_Field_List
 {
     /**
-     * @see Rabbit_Field::loadAssets()
+     * @see Rabbit_Field::initialize()
      *
      */
-    public function loadAssets()
+    public function initialize()
     {
         if($this->getAttribute('updateField') !== null) {
             $this->form->addAsset('jquery-1.2.3.pack.js');
@@ -58,7 +58,7 @@ class Rabbit_Field_DropDown extends Rabbit_Field_List
 
         if($this->getAttribute('updateField') !== null) {
             $ci->load->helper('url');
-            
+
             $update = $this->getAttribute('updateField');
 
             $attr['onchange'] = sprintf(

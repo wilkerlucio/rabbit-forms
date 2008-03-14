@@ -22,7 +22,7 @@
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
  */
 
-class Rabbit_Field_Factory
+class Rabbit_Form_Factory
 {
     /**
      * Create a new field based on name
@@ -31,16 +31,16 @@ class Rabbit_Field_Factory
      * @param Rabbit_Form $form
      * @return Rabbit_Field
      */
-    public static function factory($field, $form, $attributes = array())
+    public static function factory($form, $table)
     {
-        $classname = 'Rabbit_Field_' . $field;
+        $classname = $form ? 'Rabbit_Form_' . $form : 'Rabbit_Form';
 
         if(!class_exists($classname)) {
             $ci = get_instance();
             $ci->config->load('rabbit-forms');
 
-            foreach($ci->config->item('rabbit-fields-classpath') as $dir) {
-                $path = $dir . $field . '.php';
+            foreach($ci->config->item('rabbit-form-classpath') as $dir) {
+                $path = $dir . $form . '.php';
 
                 if(file_exists($path)) {
                     require_once($path);
@@ -49,6 +49,6 @@ class Rabbit_Field_Factory
             }
         }
 
-        return class_exists($classname) ? new $classname($form, $attributes) : null;
+        return class_exists($classname) ? new $classname($table) : null;
     }
 }

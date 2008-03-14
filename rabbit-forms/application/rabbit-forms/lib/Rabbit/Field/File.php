@@ -141,10 +141,12 @@ class Rabbit_Field_File extends Rabbit_Field
             $id
         ))->row_array();
 
-        $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
+        if(isset($data[$this->getName()])) {
+            $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
 
-        if(file_exists($path)) {
-            unlink($path);
+            if(file_exists($path)) {
+                unlink($path);
+            }
         }
     }
 

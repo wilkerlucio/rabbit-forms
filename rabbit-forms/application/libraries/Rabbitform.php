@@ -159,18 +159,17 @@ class Rabbitform
 
         //parse fields
         foreach($config['fields'] as $name => $field) {
-            $f = Rabbit_Field_Factory::factory($field['type'], $form);
+            //get params
+            $params = isset($field['params']) ? $field['params'] : array();
+
+            //initialize field
+            $f = Rabbit_Field_Factory::factory($field['type'], $form, $params);
             $f->setName($name);
             $f->setLabel($field['label']);
 
             //set persist
             if(isset($field['persist'])) {
                 $f->setPersist($field['persist']);
-            }
-
-            //set params
-            if(isset($field['params'])) {
-                $f->setAttributes($field['params']);
             }
 
             //populate field
@@ -192,6 +191,9 @@ class Rabbitform
                     }
                 }
             }
+
+            //initialize field
+            $f->initialize();
         }
 
         return $form;

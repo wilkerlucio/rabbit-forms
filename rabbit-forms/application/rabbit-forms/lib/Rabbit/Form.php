@@ -372,7 +372,6 @@ class Rabbit_Form
         $data['fields']      = array();
 
         foreach($this->fields as $field) {
-            $field->loadAssets();
             $data['fields'][$field->getName()] = array(
                 'label'      => $field->getLabel(),
                 'component'  => $field->getFieldHtml(),
