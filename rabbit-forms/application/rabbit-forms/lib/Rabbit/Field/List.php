@@ -41,7 +41,7 @@ abstract class Rabbit_Field_List extends Rabbit_Field
                 $title = $db['title'];
                 $value = $db['value'];
 
-                $sql = "select {$title}, {$value} from {$table}";
+                $sql = "select `{$title}`, `{$value}` from `{$table}`";
 
                 if(isset($db['orderby'])) {
                     $sql .= ' order by ' . $db['orderby'];
