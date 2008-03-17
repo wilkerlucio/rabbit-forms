@@ -61,9 +61,9 @@ $config['rabbit-default-settings'] = array(
         )
 	),
 
-	'retrive' => array(
+	'retrieve' => array(
 	   'view' => array(
-	       'template' => 'rabbit-forms/retrive_base'
+	       'template' => 'rabbit-forms/retrieve_base'
 	   )
 	),
 

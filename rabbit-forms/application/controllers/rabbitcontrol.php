@@ -36,17 +36,17 @@ class Rabbitcontrol extends Controller
     }
 
     /**
-     * Retrive action
+     * Retrieve action
      *
      * @param string $config
      */
-    public function retrive($config)
+    public function retrieve($config)
     {
         $configData = $this->rabbitform->prepare_config($config . '.yml');
-        $configData['retrive']['manage'] = 'rabbitcontrol/manage/' . $config . '/';
-        $configData['retrive']['delete'] = 'rabbitcontrol/delete/' . $config . '/';
+        $configData['retrieve']['manage'] = 'rabbitcontrol/manage/' . $config . '/';
+        $configData['retrieve']['delete'] = 'rabbitcontrol/delete/' . $config . '/';
 
-        echo $this->rabbitform->retrive($configData);
+        echo $this->rabbitform->retrieve($configData);
     }
 
     /**
@@ -72,6 +72,6 @@ class Rabbitcontrol extends Controller
 
         $this->rabbitform->delete($config . '.yml', $id);
 
-        redirect('rabbitcontrol/retrive/' . $config);
+        redirect('rabbitcontrol/retrieve/' . $config);
     }
 }

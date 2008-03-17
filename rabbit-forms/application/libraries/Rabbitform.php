@@ -249,7 +249,7 @@ class Rabbitform
      * @param mixed $config
      * @return string
      */
-    public function retrive($config)
+    public function retrieve($config)
     {
         $this->ci->load->database();
         $this->ci->load->helper('url');
@@ -258,9 +258,9 @@ class Rabbitform
         $data = array();
 
         //base data
-        $data['manage']  = $config['retrive']['manage'];
-        $data['delete']  = $config['retrive']['delete'];
-        $data['kfields'] = $config['retrive']['fields'];
+        $data['manage']  = $config['retrieve']['manage'];
+        $data['delete']  = $config['retrieve']['delete'];
+        $data['kfields'] = $config['retrieve']['fields'];
 
         //create form
         $form = new Rabbit_Form($config['table']);
@@ -268,7 +268,7 @@ class Rabbitform
         $form->setPrimaryKey($config['primary_key']);
 
         //load field headers
-        $fields = $config['retrive']['fields'];
+        $fields = $config['retrieve']['fields'];
         $data['fields']  = array();
 
         foreach($fields as $field) {
@@ -305,7 +305,7 @@ class Rabbitform
         }
 
         //return data
-        return $this->loadView($config['retrive']['view'], $data);
+        return $this->loadView($config['retrieve']['view'], $data);
     }
 
     /**
@@ -330,7 +330,7 @@ class Rabbitform
     }
 
     /**
-     * Load view and retrive result html
+     * Load view and retrieve result html
      *
      * @param array $config config of view
      * @param array $data data to display

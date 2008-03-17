@@ -23,10 +23,10 @@
  */
 
 ?>
-<div class="rabbit-retrive-add-container">
-    <a href="<?= site_url($manage) ?>" class="rabbit-retrive-add"><?= $params->get('addText', 'Add new record') ?></a>
+<div class="rabbit-retrieve-add-container">
+    <a href="<?= site_url($manage) ?>" class="rabbit-retrieve-add"><?= $params->get('addText', 'Add new record') ?></a>
 </div>
-<table class="rabbit-retrive-table" cellspacing="<?= $params->get('tableSpacing', '2') ?>" cellpadding="0">
+<table class="rabbit-retrieve-table" cellspacing="<?= $params->get('tableSpacing', '2') ?>" cellpadding="0">
     <thead>
         <tr>
             <?php foreach($fields as $field): ?>
