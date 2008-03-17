@@ -34,6 +34,6 @@
     <div class="rabbit-field-clear"></div>
 </div>
 <?php endforeach; ?>
-<button type="submit">OK</button>
+<button type="submit" class="rabbit-form-submit"><?= $params->get('submitText', 'OK') ?></button>
 <?= $form_close ?>
 <?= $form_exec ?>

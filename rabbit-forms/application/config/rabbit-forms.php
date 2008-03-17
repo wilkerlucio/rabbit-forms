@@ -53,6 +53,7 @@ $config['rabbit-default-settings'] = array(
     'primary_key'      => 'id',
 
     'form' => array(
+        'type' => '',
         'automatic_assets' => true,
 
         'view' => array(

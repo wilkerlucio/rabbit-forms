@@ -23,23 +23,26 @@
  */
 
 ?>
-<table>
+<div class="rabbit-retrive-add-container">
+    <a href="<?= site_url($manage) ?>" class="rabbit-retrive-add"><?= $params->get('addText', 'Add new record') ?></a>
+</div>
+<table class="rabbit-retrive-table" cellspacing="<?= $params->get('tableSpacing', '2') ?>" cellpadding="0">
     <thead>
         <tr>
             <?php foreach($fields as $field): ?>
-            <th><?= $field ?></th>
+            <td><?= $field ?></td>
             <?php endforeach; ?>
-            <th colspan="2"></th>
+            <td colspan="2"></td>
         </tr>
     </thead>
     <tbody>
         <?php foreach($rows as $row): ?>
         <tr>
             <?php foreach($kfields as $field): ?>
-            <th><?= $row[$field] ?></th>
+            <td><?= $row[$field] ?></td>
             <?php endforeach; ?>
-            <th><a href="<?= site_url($manage . $row['rabbit_row_id']) ?>" />editar</a></th>
-            <th><a href="<?= site_url($delete . $row['rabbit_row_id']) ?>" />delete</a></th>
+            <td><a href="<?= site_url($manage . $row['rabbit_row_id']) ?>" /><?= $params->get('editText', 'edit') ?></a></td>
+            <td><a href="<?= site_url($delete . $row['rabbit_row_id']) ?>" /><?= $params->get('removeText', 'remove') ?></a></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

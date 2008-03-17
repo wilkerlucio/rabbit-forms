@@ -28,6 +28,7 @@
 require_once(APPPATH . 'rabbit-forms/lib/spyc.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Container.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Form.php');
+require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Form/Factory.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/List.php');
 require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/Factory.php');
@@ -63,7 +64,7 @@ class Rabbitform
      * @param array $config
      * @return string
      */
-    protected function getFormIdentifier(array $config)
+    public function getFormIdentifier(array $config)
     {
         return md5($this->serial_counter . serialize($config));
     }
@@ -143,7 +144,7 @@ class Rabbitform
     public function prepare_form(array $config, array $defaults = array())
     {
     	//create form
-        $form = new Rabbit_Form($config['table']);
+        $form = Rabbit_Form_Factory::factory($config['form']['type'], $config['table']);
         $form->setGenerateAssets($config['form']['automatic_assets']);
         $form->setPrimaryKey($config['primary_key']);
 
@@ -335,7 +336,7 @@ class Rabbitform
      * @param array $data data to display
      * @return string
      */
-    protected function loadView($config, $data)
+    public function loadView($config, $data)
     {
         $data['params'] = new Rabbit_Container();
 
