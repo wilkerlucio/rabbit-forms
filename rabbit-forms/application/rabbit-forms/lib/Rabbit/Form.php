@@ -70,13 +70,6 @@ class Rabbit_Form
     protected $fields = array();
 
     /**
-     * View template of form
-     *
-     * @var string
-     */
-    protected $view;
-
-    /**
      * Client JS post form executions
      *
      * @var array
