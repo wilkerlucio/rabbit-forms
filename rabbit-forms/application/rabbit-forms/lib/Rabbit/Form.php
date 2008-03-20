@@ -61,6 +61,13 @@ class Rabbit_Form
      * @var string
      */
     protected $primaryKey = '';
+    
+    /**
+     * This field mantains ID of editing row if form is editing
+     *
+     * @var string
+     */
+    protected $editId = '';
 
     /**
      * Fields of form
@@ -125,6 +132,22 @@ class Rabbit_Form
         $this->primaryKey = $primaryKey;
     }
 
+    /**
+     * @return string
+     */
+    public function getEditId()
+    {
+        return $this->editId;
+    }
+
+    /**
+     * @param string $editId
+     */
+    public function setEditId($editId)
+    {
+        $this->editId = $editId;
+    }
+    
     /**
      * @return boolean
      */

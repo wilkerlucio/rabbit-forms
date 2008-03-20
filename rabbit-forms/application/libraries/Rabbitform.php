@@ -141,12 +141,13 @@ class Rabbitform
      * @param array $defaults
      * @return Rabbit_Form
      */
-    public function prepare_form(array $config, array $defaults = array())
+    public function prepare_form(array $config, array $defaults = array(), $id = '')
     {
     	//create form
         $form = Rabbit_Form_Factory::factory($config['form']['type'], $config['table']);
         $form->setGenerateAssets($config['form']['automatic_assets']);
         $form->setPrimaryKey($config['primary_key']);
+        $form->setEditId($id);
 
         //parse hiddens
         if(isset($config['form']['hidden'])) {
@@ -201,6 +202,73 @@ class Rabbitform
     }
 
     /**
+     * Prepare retrive data
+     * 
+     * This method generate retrive data based on config data
+     *
+     * @param array $config
+     * @return array
+     */
+    public function prepare_retrieve(array $config)
+    {
+        //get code igniter
+        $this->ci->load->database();
+        $this->ci->load->helper('url');
+        
+        //initialize data
+        $data = array();
+        
+        //base data
+        $data['manage']  = $config['retrieve']['manage'];
+        $data['delete']  = $config['retrieve']['delete'];
+        $data['kfields'] = $config['retrieve']['fields'];
+
+        //create form
+        $form = new Rabbit_Form($config['table']);
+        $form->setGenerateAssets($config['form']['automatic_assets']);
+        $form->setPrimaryKey($config['primary_key']);
+
+        //load field headers
+        $fields = $config['retrieve']['fields'];
+        $data['fields']  = array();
+
+        foreach($fields as $field) {
+            $data['fields'][$field] = $config['fields'][$field]['label'];
+        }
+
+        //load fields skeleton
+        $skeletons = array();
+
+        foreach($fields as $field) {
+            $skeletons[$field] = Rabbit_Field_Factory::factory($config['fields'][$field]['type'], $form);
+        }
+
+        //load rows of data
+        $data['rows'] = array();
+
+        $rows = $this->ci->db->query(sprintf(
+            'select `%s`, `%s` from `%s`',
+            $config['primary_key'],
+            implode('`,`', $fields),
+            $config['table']
+        ))->result_array();
+
+        foreach($rows as $row) {
+            $line = array();
+            $line['rabbit_row_id'] = $row[$config['primary_key']];
+
+            foreach($skeletons as $field => $skeleton) {
+                $skeleton->setRawValue($row[$field]);
+                $line[$field] = $skeleton->getDisplayValue();
+            }
+
+            $data['rows'][] = $line;
+        }
+        
+        return $data;
+    }
+    
+    /**
      * Fastest way to create a form
      *
      * @param mixed $config Config array or path
@@ -219,7 +287,7 @@ class Rabbitform
         $edit = $this->prepare_edit($config, $id);
 
         //prepare form
-        $form = $this->prepare_form($config, $edit);
+        $form = $this->prepare_form($config, $edit, $id);
 
         $check  = $this->ci->input->post('rabbit-form-id') == $this->getFormIdentifier($config);
 
@@ -251,58 +319,8 @@ class Rabbitform
      */
     public function retrieve($config)
     {
-        $this->ci->load->database();
-        $this->ci->load->helper('url');
-
         $config = $this->prepare_config($config);
-        $data = array();
-
-        //base data
-        $data['manage']  = $config['retrieve']['manage'];
-        $data['delete']  = $config['retrieve']['delete'];
-        $data['kfields'] = $config['retrieve']['fields'];
-
-        //create form
-        $form = new Rabbit_Form($config['table']);
-        $form->setGenerateAssets($config['form']['automatic_assets']);
-        $form->setPrimaryKey($config['primary_key']);
-
-        //load field headers
-        $fields = $config['retrieve']['fields'];
-        $data['fields']  = array();
-
-        foreach($fields as $field) {
-            $data['fields'][$field] = $config['fields'][$field]['label'];
-        }
-
-        //load fields skeleton
-        $skeletons = array();
-
-        foreach($fields as $field) {
-            $skeletons[$field] = Rabbit_Field_Factory::factory($config['fields'][$field]['type'], $form);
-        }
-
-        //load rows of data
-        $data['rows'] = array();
-
-        $rows = $this->ci->db->query(sprintf(
-            'select `%s`, `%s` from %s',
-            $config['primary_key'],
-            implode('`,`', $fields),
-            $config['table']
-        ))->result_array();
-
-        foreach($rows as $row) {
-            $line = array();
-            $line['rabbit_row_id'] = $row[$config['primary_key']];
-
-            foreach($skeletons as $field => $skeleton) {
-                $skeleton->setRawValue($row[$field]);
-                $line[$field] = $skeleton->getShortValue();
-            }
-
-            $data['rows'][] = $line;
-        }
+        $data = $this->prepare_retrieve($config);
 
         //return data
         return $this->loadView($config['retrieve']['view'], $data);

@@ -28,8 +28,8 @@ class Rabbit_Form_Factory
      * Create a new field based on name
      *
      * @param string $field
-     * @param Rabbit_Form $form
-     * @return Rabbit_Field
+     * @param string $form
+     * @return Rabbit_Form
      */
     public static function factory($form, $table)
     {

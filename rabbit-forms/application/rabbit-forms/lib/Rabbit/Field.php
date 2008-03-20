@@ -165,11 +165,11 @@ abstract class Rabbit_Field
     }
 
     /**
-     * Get a short version of value
+     * Get a human readable version of value
      *
      * @return string
      */
-    public function getShortValue()
+    public function getDisplayValue()
     {
         return $this->value;
     }
