@@ -26,6 +26,7 @@
 <?= $form_assets ?>
 <?= $form_open ?>
 <?= $form_hidden ?>
+<div class="rabbit-form-error"><?= $form_validation ?></div>
 <?php foreach($fields as $field): ?>
 <div class="rabbit-field-container">
     <div class="rabbit-field-label"><?= $field['label'] ?>:</div>

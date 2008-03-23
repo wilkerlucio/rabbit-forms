@@ -32,7 +32,7 @@
 function rabbit_array_merge(array $array1, array $array2)
 {
 	foreach($array2 as $k => $v) {
-		if(gettype($v) == 'array') {
+		if(gettype($v) == 'array' && (array_keys($v) !== range(0, count($v) - 1))) {
 			if(!isset($array1[$k]) || gettype($array1[$k]) != 'array') {
 				$array1[$k] = array();
 			}

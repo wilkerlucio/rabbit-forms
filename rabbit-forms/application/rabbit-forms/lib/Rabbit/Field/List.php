@@ -25,6 +25,24 @@
 abstract class Rabbit_Field_List extends Rabbit_Field
 {
     /**
+     * @see Rabbit_Field::getDisplayValue()
+     *
+     * @return string
+     */
+    public function getDisplayValue()
+    {
+        $items = $this->getItems();
+        
+        foreach($items as $k => $v) {
+            if($k == $this->getRawValue()) {
+                return $v;
+            }
+        }
+        
+        return $this->getRawValue();
+    }
+    
+    /**
      * Get options of dropdown
      *
      * @return array

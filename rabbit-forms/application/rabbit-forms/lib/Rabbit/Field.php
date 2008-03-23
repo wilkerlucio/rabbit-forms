@@ -180,7 +180,7 @@ abstract class Rabbit_Field
      * If your plugin needs to de-serialize data in some
      * way you will overload this method to unserialize
      *
-     * @return string
+     * @return mixed
      */
     public function getValue()
     {

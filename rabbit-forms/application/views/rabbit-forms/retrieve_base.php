@@ -46,4 +46,11 @@
         </tr>
         <?php endforeach; ?>
     </tbody>
+    <?php if(isset($pagination) && !empty($pagination)): ?>
+    <tfoot>
+        <tr>
+            <td colspan="<?= count($kfields) + 2 ?>"><?= $pagination ?></td>
+        </tr>
+    </tfoot>
+    <? endif; ?>
 </table>

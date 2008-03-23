@@ -25,22 +25,47 @@
 class Rabbit_Field_CheckBoxGroup extends Rabbit_Field_List
 {
     /**
-     * @see Rabbit_Field::initialize()
+     * @see Rabbit_Field::__construct()
      *
      * @return void
      */
-    public function initialize()
+    public function __construct(Rabbit_Form $form, array $attributes = array())
     {
+        parent::__construct($form, $attributes);
         $this->setValue(array());
+    }
+    
+    /**
+     * @see Rabbit_Field::getDisplayValue()
+     *
+     * @return string
+     */
+    public function getDisplayValue()
+    {
+        $output = array();
+        $items = $this->getItems();
+        $aitems = $this->getValue();
+        
+        foreach($items as $k => $v) {
+            if(in_array($k, $aitems)) {
+                $output[] = $v;
+            }
+        }
+        
+        return implode(', ', $output);
     }
 
     /**
      * @see Rabbit_Field::getValue()
      *
-     * @return string
+     * @return mixed
      */
     public function getValue()
     {
+        if(!$this->value) {
+            return array();
+        }
+        
         return unserialize($this->value);
     }
 

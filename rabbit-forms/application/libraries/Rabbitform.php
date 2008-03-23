@@ -68,6 +68,24 @@ class Rabbitform
     {
         return md5($this->serial_counter . serialize($config));
     }
+    
+    /**
+     * Load configuration YAML file
+     *
+     * @param string $config
+     * @return array
+     */
+    public function configLoad($config) {
+        foreach($this->ci->config->item('rabbit-yml-classpath') as $dir) {
+            $path = $dir . $config;
+
+            if(file_exists($path)) {
+                $config = Spyc::YAMLLoad($path);
+            }
+        }
+        
+        return $config;
+    }
 
     /**
      * Prepare config data
@@ -82,23 +100,32 @@ class Rabbitform
 
         //check for YML config
         if(gettype($config) == 'string') {
-            foreach($this->ci->config->item('rabbit-yml-classpath') as $dir) {
-                $path = $dir . $config;
-
-                if(file_exists($path)) {
-                    $config = Spyc::YAMLLoad($path);
-                }
-            }
+            $config = $this->configLoad($config);
+        }
+        
+        //build configuration stack
+        $configStack = array();
+        array_push($configStack, $config);
+        $parsing = $config;
+        
+        while(isset($parsing['extends'])) {
+            $c = gettype($parsing['extends']) == 'string' ? 
+                 $this->configLoad($parsing['extends']) :
+                 $parsing['extends'];
+            
+            array_push($configStack, $c);
+            $parsing = $c;
+        }
+        
+        //merge configurations
+        $final = $this->ci->config->item('rabbit-default-settings');
+        
+        while(count($configStack) > 0) {
+            $final = rabbit_array_merge($final, array_pop($configStack));
         }
 
-        //merge with default
-        $config = rabbit_array_merge(
-            $this->ci->config->item('rabbit-default-settings'),
-            $config
-        );
-
         //return data
-        return $config;
+        return $final;
     }
 
     /**
@@ -148,6 +175,37 @@ class Rabbitform
         $form->setGenerateAssets($config['form']['automatic_assets']);
         $form->setPrimaryKey($config['primary_key']);
         $form->setEditId($id);
+        
+        //form validator
+        if(isset($config['form']['validation'])) {
+            $form->setValidationCallback($config['form']['validation']);
+        }
+        
+        //form events
+        if(isset($config['form']['preinsert'])) {
+            $form->setPreInsert($config['form']['preinsert']);
+        }
+        if(isset($config['form']['postinsert'])) {
+            $form->setPostInsert($config['form']['postinsert']);
+        }
+        if(isset($config['form']['preupdate'])) {
+            $form->setPreUpdate($config['form']['preupdate']);
+        }
+        if(isset($config['form']['postupdate'])) {
+            $form->setPostUpdate($config['form']['postupdate']);
+        }
+        if(isset($config['form']['prechange'])) {
+            $form->setPreChange($config['form']['prechange']);
+        }
+        if(isset($config['form']['postchange'])) {
+            $form->setPostChange($config['form']['postchange']);
+        }
+        if(isset($config['form']['predelete'])) {
+            $form->setPreDelete($config['form']['predelete']);
+        }
+        if(isset($config['form']['postdelete'])) {
+            $form->setPostDelete($config['form']['postdelete']);
+        }
 
         //parse hiddens
         if(isset($config['form']['hidden'])) {
@@ -209,7 +267,7 @@ class Rabbitform
      * @param array $config
      * @return array
      */
-    public function prepare_retrieve(array $config)
+    public function prepare_retrieve(array $config, $page = 0)
     {
         //get code igniter
         $this->ci->load->database();
@@ -222,6 +280,51 @@ class Rabbitform
         $data['manage']  = $config['retrieve']['manage'];
         $data['delete']  = $config['retrieve']['delete'];
         $data['kfields'] = $config['retrieve']['fields'];
+        
+        //order
+        $orderby = $config['retrieve']['orderby'];
+        
+        if($orderby) {
+            $orderby = sprintf('order by `%s`', $orderby);
+        }
+        
+        //filters
+        if(isset($config['retrieve']['filters'])) {
+            $filters = 'where ' . implode(' and ', $config['retrieve']['filters']);
+        } else {
+            $filters = '';
+        }
+        
+        //pagination
+        if(isset($config['retrieve']['pagination']) && isset($config['retrieve']['pagination']['base_url'])) {
+            $this->ci->load->library('pagination');
+            
+            $ptotal = $this->ci->db->query(sprintf(
+                'select count(*) as total from `%s` %s',
+                $config['table'],
+                $filters
+            ))->row_array();
+            
+            if(!isset($config['retrieve']['pagination']['per_page'])) {
+                show_error("Rabbit forms: you need to configure per_page of pagination");
+            }
+            
+            $config['retrieve']['pagination']['base_url'] = site_url($config['retrieve']['pagination']['base_url']);
+            
+            $config['retrieve']['pagination']['total_rows'] = $ptotal['total'];
+            
+            $this->ci->pagination->initialize($config['retrieve']['pagination']);
+            
+            $data['pagination'] = $this->ci->pagination->create_links();
+            
+            $pagination = sprintf(
+                'limit %s, %s',
+                $page,
+                $config['retrieve']['pagination']['per_page']
+            );
+        } else {
+            $pagination = '';
+        }
 
         //create form
         $form = new Rabbit_Form($config['table']);
@@ -240,20 +343,28 @@ class Rabbitform
         $skeletons = array();
 
         foreach($fields as $field) {
-            $skeletons[$field] = Rabbit_Field_Factory::factory($config['fields'][$field]['type'], $form);
+            $skeletons[$field] = Rabbit_Field_Factory::factory(
+                $config['fields'][$field]['type'],
+                $form,
+                isset($config['fields'][$field]['params']) ? $config['fields'][$field]['params'] : array());
+            $skeletons[$field]->initialize();
         }
 
         //load rows of data
         $data['rows'] = array();
 
         $rows = $this->ci->db->query(sprintf(
-            'select `%s`, `%s` from `%s`',
+            'select `%s`, `%s` from `%s` %s %s %s',
             $config['primary_key'],
             implode('`,`', $fields),
-            $config['table']
+            $config['table'],
+            $filters,
+            $orderby,
+            $pagination
         ))->result_array();
 
         foreach($rows as $row) {
+            $form->setEditId($row[$config['primary_key']]);
             $line = array();
             $line['rabbit_row_id'] = $row[$config['primary_key']];
 
@@ -317,10 +428,10 @@ class Rabbitform
      * @param mixed $config
      * @return string
      */
-    public function retrieve($config)
+    public function retrieve($config, $page = 0)
     {
         $config = $this->prepare_config($config);
-        $data = $this->prepare_retrieve($config);
+        $data = $this->prepare_retrieve($config, $page);
 
         //return data
         return $this->loadView($config['retrieve']['view'], $data);

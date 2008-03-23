@@ -25,12 +25,13 @@
 class Rabbit_Field_CheckBox extends Rabbit_Field
 {
     /**
-     * @see Rabbit_Field::initialize()
+     * @see Rabbit_Field::__construct()
      *
      * @return void
      */
-    public function initialize()
+    public function __construct(Rabbit_Form $form, array $attributes = array())
     {
+        parent::__construct($form, $attributes);
         $this->value = 0;
     }
 

@@ -68,6 +68,20 @@ class Rabbit_Form
      * @var string
      */
     protected $editId = '';
+    
+    /**
+     * The name of callback function to validate form
+     *
+     * @var string
+     */
+    protected $validationCallback = '';
+    
+    /**
+     * The validation message of form
+     *
+     * @var string
+     */
+    protected $validationMessage = '';
 
     /**
      * Fields of form
@@ -90,6 +104,62 @@ class Rabbit_Form
      */
     protected $hiddenFields = array();
 
+    /**
+     * The name of callback function to pre insert event
+     *
+     * @var string
+     */
+    protected $preInsert = '';
+
+    /**
+     * The name of callback function to post insert event
+     *
+     * @var string
+     */
+    protected $postInsert = '';
+
+    /**
+     * The name of callback function to pre update event
+     *
+     * @var string
+     */
+    protected $preUpdate = '';
+
+    /**
+     * The name of callback function to post update event
+     *
+     * @var string
+     */
+    protected $postUpdate = '';
+
+    /**
+     * The name of callback function to pre change event
+     *
+     * @var string
+     */
+    protected $preChange = '';
+
+    /**
+     * The name of callback function to post change event
+     *
+     * @var string
+     */
+    protected $postChange = '';
+
+    /**
+     * The name of callback function to pre change event
+     *
+     * @var string
+     */
+    protected $preDelete = '';
+
+    /**
+     * The name of callback function to post change event
+     *
+     * @var string
+     */
+    protected $postDelete = '';
+    
     /**
      * Create a new form
      *
@@ -146,6 +216,166 @@ class Rabbit_Form
     public function setEditId($editId)
     {
         $this->editId = $editId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidationCallback()
+    {
+        return $this->validationCallback;
+    }
+
+    /**
+     * @param string $validationCallback
+     */
+    public function setValidationCallback($validationCallback)
+    {
+        $this->validationCallback = $validationCallback;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidationMessage()
+    {
+        return $this->validationMessage;
+    }
+
+    /**
+     * @param string $validationMessage
+     */
+    public function setValidationMessage($validationMessage)
+    {
+        $this->validationMessage = $validationMessage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostChange()
+    {
+        return $this->postChange;
+    }
+
+    /**
+     * @param string $postChange
+     */
+    public function setPostChange($postChange)
+    {
+        $this->postChange = $postChange;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostDelete()
+    {
+        return $this->postDelete;
+    }
+
+    /**
+     * @param string $postDelete
+     */
+    public function setPostDelete($postDelete)
+    {
+        $this->postDelete = $postDelete;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostInsert()
+    {
+        return $this->postInsert;
+    }
+
+    /**
+     * @param string $postInsert
+     */
+    public function setPostInsert($postInsert)
+    {
+        $this->postInsert = $postInsert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostUpdate()
+    {
+        return $this->postUpdate;
+    }
+
+    /**
+     * @param string $postUpdate
+     */
+    public function setPostUpdate($postUpdate)
+    {
+        $this->postUpdate = $postUpdate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreChange()
+    {
+        return $this->preChange;
+    }
+
+    /**
+     * @param string $preChange
+     */
+    public function setPreChange($preChange)
+    {
+        $this->preChange = $preChange;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreDelete()
+    {
+        return $this->preDelete;
+    }
+
+    /**
+     * @param string $preDelete
+     */
+    public function setPreDelete($preDelete)
+    {
+        $this->preDelete = $preDelete;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreInsert()
+    {
+        return $this->preInsert;
+    }
+
+    /**
+     * @param string $preInsert
+     */
+    public function setPreInsert($preInsert)
+    {
+        $this->preInsert = $preInsert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreUpdate()
+    {
+        return $this->preUpdate;
+    }
+
+    /**
+     * @param string $preUpdate
+     */
+    public function setPreUpdate($preUpdate)
+    {
+        $this->preUpdate = $preUpdate;
     }
     
     /**
@@ -384,8 +614,9 @@ class Rabbit_Form
      */
     public function generate()
     {
-        $data['form_open']   = $this->getOpenTag();
-        $data['fields']      = array();
+        $data['form_open']       = $this->getOpenTag();
+        $data['fields']          = array();
+        $data['form_validation'] = $this->getValidationMessage();
 
         foreach($this->fields as $field) {
             $data['fields'][$field->getName()] = array(
@@ -430,6 +661,13 @@ class Rabbit_Form
      */
     public function formValidate()
     {
+        $ci =& get_instance();
+        $method = $this->validationCallback;
+        
+        if(method_exists($ci, $method)) {
+            return $ci->$method($this);
+        }
+        
         return true;
     }
 
@@ -469,6 +707,9 @@ class Rabbit_Form
             $field->preInsert();
             $field->preChange();
         }
+        
+        $this->preInsert();
+        $this->preChange();
 
         $ci =& get_instance();
         $ci->load->database();
@@ -482,6 +723,9 @@ class Rabbit_Form
             $field->postInsert($id);
             $field->postChange($id);
         }
+        
+        $this->postInsert($id);
+        $this->postChange($id);
     }
 
     /**
@@ -496,6 +740,9 @@ class Rabbit_Form
             $field->preUpdate($id);
             $field->preChange($id);
         }
+        
+        $this->preUpdate($id);
+        $this->preChange($id);
 
         $ci =& get_instance();
         $ci->load->database();
@@ -508,6 +755,9 @@ class Rabbit_Form
             $field->postUpdate($id);
             $field->postChange($id);
         }
+        
+        $this->postUpdate($id);
+        $this->postChange($id);
     }
 
     /**
@@ -521,6 +771,8 @@ class Rabbit_Form
         foreach($this->fields as $field) {
             $field->preDelete($id);
         }
+        
+        $this->preDelete($id);
 
         $ci =& get_instance();
         $ci->load->database();
@@ -535,5 +787,108 @@ class Rabbit_Form
         foreach($this->fields as $field) {
             $field->postDelete($id);
         }
+        
+        $this->postDelete($id);
+    }
+    
+    /*
+     * Events
+     */
+
+    protected function dispatchEvent($method, $id = null)
+    {
+        $ci =& get_instance();
+        
+        if(method_exists($ci, $method)) {
+            $ci->$method($this, $id);
+        }
+    }
+    
+    /**
+     * Event dispatched before insert
+     *
+     * @return void
+     */
+    public function preInsert()
+    {
+        $this->dispatchEvent($this->getPreInsert());
+    }
+
+    /**
+     * Event dispatched after insert
+     *
+     * @param string $id
+     * @return void
+     */
+    public function postInsert($id)
+    {
+        $this->dispatchEvent($this->getPostInsert(), $id);
+    }
+
+    /**
+     * Event dispatched before update
+     *
+     * @param string $id
+     * @return void
+     */
+    public function preUpdate($id)
+    {
+        $this->dispatchEvent($this->getPreUpdate(), $id);
+    }
+
+    /**
+     * Event dispatched after update
+     *
+     * @param string $id
+     * @return void
+     */
+    public function postUpdate($id)
+    {
+        $this->dispatchEvent($this->getPostUpdate(), $id);
+    }
+
+    /**
+     * Event dispatched before record change (shortcut for insert and
+     * update together)
+     *
+     * @return void
+     */
+    public function preChange($id = null)
+    {
+        $this->dispatchEvent($this->getPreChange(), $id);
+    }
+
+    /**
+     * Event dispatched after record change (shortcut for insert and
+     * update together)
+     *
+     * @param string $id
+     * @return void
+     */
+    public function postChange($id)
+    {
+        $this->dispatchEvent($this->getPostChange(), $id);
+    }
+
+    /**
+     * Event dispatched before delete
+     *
+     * @param string $id
+     * @return void
+     */
+    public function preDelete($id)
+    {
+        $this->dispatchEvent($this->getPreDelete(), $id);
+    }
+
+    /**
+     * Event dispatched after delete
+     *
+     * @param string $id
+     * @return void
+     */
+    public function postDelete($id)
+    {
+        $this->dispatchEvent($this->getPostDelete(), $id);
     }
 }

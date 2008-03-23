@@ -35,6 +35,20 @@ class Rabbit_Field_Foreign extends Rabbit_Field
     }
     
     /**
+     * Get populate coming from post data
+     *
+     * @return array
+     */
+    public function getPostPopulate()
+    {
+        if(isset($_POST[$this->getCheckName()])) {
+            return $_POST[$this->getCheckName()];
+        }
+        
+        return array();
+    }
+    
+    /**
      * Get populate data for field
      *
      * @param array $config
@@ -43,7 +57,7 @@ class Rabbit_Field_Foreign extends Rabbit_Field
     public function getPopulate(array $config)
     {
         if(isset($_POST[$this->getCheckName()])) {
-            return $_POST[$this->getCheckName()];
+            return $this->getPostPopulate();
         } elseif($this->form->getEditId()) {
             $ci =& get_instance();
             $ci->load->database();
@@ -105,6 +119,9 @@ class Rabbit_Field_Foreign extends Rabbit_Field
         $type = $this->getAttribute('type', '');
         $config = $ci->rabbitform->prepare_config($this->getAttribute('config', array()));
         $data = $ci->input->post($this->getCheckName(), array());
+        
+        if(!$data)
+            $data = array();
         
         if($type == 'onemany') {
             $ci->db->query(sprintf(

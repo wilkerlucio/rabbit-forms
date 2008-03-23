@@ -62,6 +62,8 @@ $config['rabbit-default-settings'] = array(
 	),
 
 	'retrieve' => array(
+	   'orderby' => '',
+	   
 	   'view' => array(
 	       'template' => 'rabbit-forms/retrieve_base'
 	   )
