@@ -25,6 +25,31 @@
 class Rabbit_Field_File extends Rabbit_Field
 {
     /**
+     * Remove stored file from file system
+     *
+     * @param string $id
+     */
+    public function removeFile($id)
+    {
+        $ci =& get_instance();
+        $ci->load->database();
+
+        $data = $ci->db->query(sprintf(
+            "select %s from %s where %s = '%s'",
+            $this->getName(),
+            $this->getForm()->getTable(),
+            $this->getForm()->getPrimaryKey(),
+            $id
+        ))->row_array();
+
+        $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
+
+        if(file_exists($path)) {
+            unlink($path);
+        }
+    }
+    
+    /**
      * Return path of folder that contains files
      *
      * @return string
@@ -34,6 +59,15 @@ class Rabbit_Field_File extends Rabbit_Field
         $ci =& get_instance();
 
         return   $ci->config->item('rabbit-upload-path')
+               . $this->form->getTable()
+               . '/';
+    }
+    
+    protected function reachFieldPath()
+    {
+        $ci =& get_instance();
+
+        return   $ci->config->item('rabbit-upload')
                . $this->form->getTable()
                . '/';
     }
@@ -64,9 +98,11 @@ class Rabbit_Field_File extends Rabbit_Field
     public function preUpdate($id)
     {
         if($this->hasUpload()) {
+            $this->removeFile($id);
+        } else {
             $ci =& get_instance();
             $ci->load->database();
-
+        
             $data = $ci->db->query(sprintf(
                 "select %s from %s where %s = '%s'",
                 $this->getName(),
@@ -74,12 +110,8 @@ class Rabbit_Field_File extends Rabbit_Field
                 $this->getForm()->getPrimaryKey(),
                 $id
             ))->row_array();
-
-            $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
-
-            if(file_exists($path)) {
-                unlink($path);
-            }
+        
+            $this->getForm()->addHiddenField($this->getName(), $data[$this->getName()]);
         }
     }
 
@@ -131,23 +163,7 @@ class Rabbit_Field_File extends Rabbit_Field
      */
     public function preDelete($id)
     {
-        $ci =& get_instance();
-
-        $data = $ci->db->query(sprintf(
-            "select %s from %s where %s = '%s'",
-            $this->getName(),
-            $this->getForm()->getTable(),
-            $this->getForm()->getPrimaryKey(),
-            $id
-        ))->row_array();
-
-        if(isset($data[$this->getName()])) {
-            $path = $this->baseFilePath() . $id . '_' . $data[$this->getName()];
-
-            if(file_exists($path)) {
-                unlink($path);
-            }
-        }
+        $this->removeFile($id);
     }
 
     /**
