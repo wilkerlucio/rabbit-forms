@@ -410,10 +410,6 @@ class Rabbitform
                 $form->editData($id);
             }
 
-            $this->ci->load->helper('url');
-
-            redirect($config['redirect']);
-
             return '';
         } else {
             $data = $form->generate();

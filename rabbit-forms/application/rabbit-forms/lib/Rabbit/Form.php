@@ -500,6 +500,7 @@ class Rabbit_Form
      * Get specifiq field
      *
      * @param string $name
+	 * @return Rabbit_Field
      */
     public function getField($name)
     {
