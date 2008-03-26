@@ -61,21 +61,21 @@ class Rabbit_Form
      * @var string
      */
     protected $primaryKey = '';
-    
+
     /**
      * This field mantains ID of editing row if form is editing
      *
      * @var string
      */
     protected $editId = '';
-    
+
     /**
      * The name of callback function to validate form
      *
      * @var string
      */
     protected $validationCallback = '';
-    
+
     /**
      * The validation message of form
      *
@@ -159,7 +159,7 @@ class Rabbit_Form
      * @var string
      */
     protected $postDelete = '';
-    
+
     /**
      * Create a new form
      *
@@ -377,7 +377,7 @@ class Rabbit_Form
     {
         $this->preUpdate = $preUpdate;
     }
-    
+
     /**
      * @return boolean
      */
@@ -500,7 +500,7 @@ class Rabbit_Form
      * Get specifiq field
      *
      * @param string $name
-	 * @return Rabbit_Field
+     * @return Rabbit_Field
      */
     public function getField($name)
     {
@@ -664,11 +664,11 @@ class Rabbit_Form
     {
         $ci =& get_instance();
         $method = $this->validationCallback;
-        
+
         if(method_exists($ci, $method)) {
             return $ci->$method($this);
         }
-        
+
         return true;
     }
 
@@ -708,7 +708,7 @@ class Rabbit_Form
             $field->preInsert();
             $field->preChange();
         }
-        
+
         $this->preInsert();
         $this->preChange();
 
@@ -724,7 +724,7 @@ class Rabbit_Form
             $field->postInsert($id);
             $field->postChange($id);
         }
-        
+
         $this->postInsert($id);
         $this->postChange($id);
     }
@@ -741,7 +741,7 @@ class Rabbit_Form
             $field->preUpdate($id);
             $field->preChange($id);
         }
-        
+
         $this->preUpdate($id);
         $this->preChange($id);
 
@@ -756,7 +756,7 @@ class Rabbit_Form
             $field->postUpdate($id);
             $field->postChange($id);
         }
-        
+
         $this->postUpdate($id);
         $this->postChange($id);
     }
@@ -772,7 +772,7 @@ class Rabbit_Form
         foreach($this->fields as $field) {
             $field->preDelete($id);
         }
-        
+
         $this->preDelete($id);
 
         $ci =& get_instance();
@@ -788,10 +788,10 @@ class Rabbit_Form
         foreach($this->fields as $field) {
             $field->postDelete($id);
         }
-        
+
         $this->postDelete($id);
     }
-    
+
     /*
      * Events
      */
@@ -799,12 +799,12 @@ class Rabbit_Form
     protected function dispatchEvent($method, $id = null)
     {
         $ci =& get_instance();
-        
+
         if(method_exists($ci, $method)) {
             $ci->$method($this, $id);
         }
     }
-    
+
     /**
      * Event dispatched before insert
      *

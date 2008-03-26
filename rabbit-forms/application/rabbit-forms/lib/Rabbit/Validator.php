@@ -60,6 +60,22 @@ abstract class Rabbit_Validator
     }
 
     /**
+     * @return Rabbit_Field
+     */
+    public function getField()
+    {
+        return $this->field;
+    }
+
+    /**
+     * @param Rabbit_Field $field
+     */
+    public function setField($field)
+    {
+        $this->field = $field;
+    }
+
+    /**
      * Get validation message
      *
      * @return string
@@ -67,6 +83,14 @@ abstract class Rabbit_Validator
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
     }
 
     /**
@@ -79,6 +103,14 @@ abstract class Rabbit_Validator
     public function getParam($name, $default = null)
     {
         return isset($this->params[$name]) ? $this->params[$name] : $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 
     /**

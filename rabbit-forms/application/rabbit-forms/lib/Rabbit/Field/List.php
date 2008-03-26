@@ -32,16 +32,16 @@ abstract class Rabbit_Field_List extends Rabbit_Field
     public function getDisplayValue()
     {
         $items = $this->getItems();
-        
+
         foreach($items as $k => $v) {
             if($k == $this->getRawValue()) {
                 return $v;
             }
         }
-        
+
         return $this->getRawValue();
     }
-    
+
     /**
      * Get options of dropdown
      *
@@ -59,7 +59,13 @@ abstract class Rabbit_Field_List extends Rabbit_Field
                 $title = $db['title'];
                 $value = $db['value'];
 
-                $sql = "select `{$title}`, `{$value}` from `{$table}`";
+                if(isset($db['filters'])) {
+                    $where = 'where ' . implode(' and ', $db['filters']);
+                } else {
+                    $where = '';
+                }
+
+                $sql = "select `{$title}`, `{$value}` from `{$table}` {$where}";
 
                 if(isset($db['orderby'])) {
                     $sql .= ' order by ' . $db['orderby'];
