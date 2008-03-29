@@ -63,6 +63,11 @@ class Rabbit_Field_File extends Rabbit_Field
                . '/';
     }
     
+    /**
+     * Get the file path to reach file
+     *
+     * @return string
+     */
     protected function reachFieldPath()
     {
         $ci =& get_instance();
@@ -77,7 +82,7 @@ class Rabbit_Field_File extends Rabbit_Field
      *
      * @return boolean
      */
-    protected function hasUpload()
+    public function hasUpload()
     {
         $file = $_FILES[$this->getName()];
 

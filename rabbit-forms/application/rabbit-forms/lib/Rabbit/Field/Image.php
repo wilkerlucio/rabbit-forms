@@ -28,6 +28,28 @@ require_once(APPPATH . 'rabbit-forms/lib/Rabbit/Field/File.php');
 class Rabbit_Field_Image extends Rabbit_Field_File
 {
     /**
+     * Overload the construtor to force image extensions
+     *
+     * @param Rabbit_Form $form
+     * @param array $attributes
+     */
+    public function __construct(Rabbit_Form $form, array $attributes = array())
+    {
+        parent::__construct($form, $attributes);
+        
+        $validator = Rabbit_Validator_Factory::factory('File', $this);
+        $validator->setParams(array(
+            'extensions' => array(
+                'jpg',
+                'jpeg',
+                'gif',
+                'png',
+                'bmp'
+            )
+        ));
+    }
+    
+    /**
      * @see Rabbit_Field_File::removeFile()
      *
      * @param string $id
@@ -65,6 +87,11 @@ class Rabbit_Field_Image extends Rabbit_Field_File
         }
     }
 
+    /**
+     * Get image tag to display image
+     *
+     * @return string
+     */
     public function getImageTag()
     {
         if(!$this->getValue()) {

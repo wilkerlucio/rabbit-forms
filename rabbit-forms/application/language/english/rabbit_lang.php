@@ -42,3 +42,9 @@ $lang['rabbit_max_length']           = 'The %s field can not exceed %s character
 $lang['rabbit_valid_regex']          = 'The %s field is not compatible with pattern.';
 
 $lang['rabbit_valid_required']       = 'The %s field is required.';
+
+$lang['rabbit_valid_file_extension'] = 'The extension %s is not valid for field %s.';
+$lang['rabbit_valid_file_minsize']   = 'The file of field %s must be at least %s of size.';
+$lang['rabbit_valid_file_maxsize']   = 'The file of field %s can not exceed %s of size.';
+
+$lang['rabbit_valid_unique']         = 'The %s don\'t accept duplicates and the %s value is recorded, try another value';
