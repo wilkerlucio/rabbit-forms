@@ -40,13 +40,13 @@ class Rabbit_Validator_Unique extends Rabbit_Validator
         
         $query = $ci->db->query(sprintf(
             "select `%s` from `%s` where `%s` = '%s'",
-            $field,
+            $this->field->getForm()->getPrimaryKey(),
             $this->field->getForm()->getTable(),
             $field,
             $this->field->getRawValue()
         ))->result_array();
 
-        if(count($query) > 0) {
+        if(count($query) > 0 && $query[0][$this->field->getForm()->getPrimaryKey()] != $this->field->getForm()->getEditId()) {
             $this->message = sprintf(
                 $ci->lang->line('rabbit_valid_unique'),
                 $this->field->getLabel(),

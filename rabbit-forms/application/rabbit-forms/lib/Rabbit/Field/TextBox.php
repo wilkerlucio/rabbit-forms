@@ -49,6 +49,20 @@ class Rabbit_Field_TextBox extends Rabbit_Field
     }
 
     /**
+     * @see Rabbit_Field::setValue()
+     *
+     * @param unknown_type $value
+     */
+    public function setValue($value)
+    {
+        if(!$this->getAttribute('accept_html', false)) {
+            $value = htmlentities($value);
+        }
+        
+        $this->value = $value;
+    }
+
+    /**
      * @see Rabbit_Field::getFieldHtml()
      *
      * @return string

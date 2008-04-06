@@ -213,6 +213,6 @@ class Rabbit_Field_Foreign extends Rabbit_Field
         
         $defaultView = array('template' => 'rabbit-forms/retrieve_foreign');
         
-        return $ci->rabbitform->loadView($this->getAttribute('retriveView', $defaultView), $retrieve, true);
+        return $ci->rabbitform->loadView($this->getAttribute('retrieveView', $defaultView), $retrieve, true);
     }
 }
