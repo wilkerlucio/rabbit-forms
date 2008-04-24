@@ -146,7 +146,10 @@ class Rabbit_Field_Image extends Rabbit_Field_File
     public function preChange()
     {
         if($this->hasUpload()) {
-            $filename = pathinfo($_FILES[$this->getName()]['name'], PATHINFO_FILENAME);
+            $ci =& get_instance();
+            $ci->load->helper('rabbit');
+            
+            $filename = rabbit_pathinfo($_FILES[$this->getName()]['name'], RABBITPATH_FILENAME);
             $filetype = $this->getAttribute('output_type', pathinfo($_FILES[$this->getName()]['name'], PATHINFO_EXTENSION));
             
             $this->getForm()->addHiddenField($this->getName(), $filename . '.' . $filetype);
@@ -161,6 +164,9 @@ class Rabbit_Field_Image extends Rabbit_Field_File
     public function postChange($id)
     {
         if($this->hasUpload()) {
+            $ci =& get_instance();
+            $ci->load->helper('rabbit');
+            
             $this->getForm()->removeHiddenField($this->getName());
             
             $modes = array(
@@ -181,7 +187,7 @@ class Rabbit_Field_Image extends Rabbit_Field_File
             
             $path .= $id . '_' . $file['name'];
             
-            $filename = pathinfo($file['name'], PATHINFO_FILENAME);
+            $filename = rabbit_pathinfo($file['name'], RABBITPATH_FILENAME);
             $filetype = $this->getAttribute('output_type', pathinfo($file['name'], PATHINFO_EXTENSION));
             
             $img = new Image_Toolbox($file['tmp_name']);

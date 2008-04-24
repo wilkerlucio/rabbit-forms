@@ -33,6 +33,9 @@ class Rabbit_Field_Html extends Rabbit_Field
      */
     public function initialize()
     {
+        $ci =& get_instance();
+        $ci->load->helper('rabbit');
+        
         $this->form->addAsset('tiny_mce/tiny_mce.js');
 
         $options = $this->getAttribute('options', array());
@@ -40,7 +43,7 @@ class Rabbit_Field_Html extends Rabbit_Field
         $options['mode']     = 'exact';
         $options['elements'] = $this->getName();
 
-        $options = json_encode($options);
+        $options = rabbit_json_encode($options);
 
         $this->form->addClientExec(sprintf('
             tinyMCE.init(%s);

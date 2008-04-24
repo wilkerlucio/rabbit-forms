@@ -42,7 +42,7 @@
             <td><?= $row[$field] ?></td>
             <?php endforeach; ?>
             <td><a href="<?= site_url($manage . $row['rabbit_row_id']) ?>" /><?= $params->get('editText', 'edit') ?></a></td>
-            <td><a href="<?= site_url($delete . $row['rabbit_row_id']) ?>" /><?= $params->get('removeText', 'remove') ?></a></td>
+            <td><a href="javascript:;" onclick="if(confirm('<?= $params->get('confirmDelete', 'Remove this record?') ?>')) location.href = '<?= site_url($delete . $row['rabbit_row_id']) ?>';" /><?= $params->get('removeText', 'remove') ?></a></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

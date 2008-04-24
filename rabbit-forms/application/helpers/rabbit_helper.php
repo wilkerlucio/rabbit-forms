@@ -108,3 +108,102 @@ function rabbit_attributes_build(array $data)
 
     return implode(" ", $attributes);
 }
+
+/**
+ * Encode into JSON format
+ *
+ * @param mixed $var
+ * @return string
+ */
+function rabbit_json_encode($var)
+{
+    switch(gettype($var)) {
+        case 'boolean':
+            return $var ? 'true' : 'false';
+        
+        case 'NULL':
+            return 'null';
+        
+        case 'integer':
+            return (int) $var;
+        
+        case 'double':
+            return (double) $var;
+        
+        case 'float':
+            return (float) $var;
+        
+        case 'string':
+            $var = $var;
+            return (string) '"' . addslashes($var) . '"';
+        
+        case 'array':
+            if(is_array($var) && count($var) && (array_keys($var) !== range(0, count($var) - 1))) {
+                $propriedades = array_map("rabbit_json_array_map", array_keys($var), array_values($var));
+                return '{' . join(',', $propriedades) . '}';
+            }
+            
+            $elementos = array_map("rabbit_json_encode", $var);
+            return '[' . join(',', $elementos) . ']';
+    }
+    
+    return null;
+}
+
+/**
+ * Map JSON data
+ *
+ * @param string $chave
+ * @param string $valor
+ * @return string
+ */
+function rabbit_json_array_map($chave, $valor)
+{
+    $chave_codificada = rabbit_json_encode(strval($chave));
+    $valor_codificado = rabbit_json_encode($valor);
+    
+    return $chave_codificada . ":" . $valor_codificado;
+}
+
+/**
+ * Constants for rabbit path info
+ */
+define('RABBITPATH_DIRNAME', 1);
+define('RABBITPATH_BASENAME', 2);
+define('RABBITPATH_EXTENSION', 3);
+define('RABBITPATH_FILENAME', 4);
+
+function rabbit_pathinfo($path, $options = 0)
+{
+    $path_parts = preg_split('/(\\|\/)/', $path);
+    $basename = array_pop($path_parts);
+    $dirname = implode('/', $path_parts);
+    
+    $name_parts = explode('.', $basename);
+    
+    if(count($name_parts) == 1) {
+        $extension = '';
+        $filename = $basename;
+    } else {
+        $extension = array_pop($name_parts);
+        $filename = implode('.', $name_parts);
+    }
+    
+    switch($options) {
+        case RABBITPATH_DIRNAME:
+            return $dirname;
+        case RABBITPATH_BASENAME:
+            return $basename;
+        case RABBITPATH_EXTENSION:
+            return $extension;
+        case RABBITPATH_FILENAME:
+            return $filename;
+        default:
+            return array(
+                'dirname'   => $dirname,
+                'basename'  => $basename,
+                'extension' => $extension,
+                'filename'  => $filename
+            );
+    }
+}
