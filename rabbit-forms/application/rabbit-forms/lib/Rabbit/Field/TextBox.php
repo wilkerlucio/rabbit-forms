@@ -56,7 +56,7 @@ class Rabbit_Field_TextBox extends Rabbit_Field
     public function setValue($value)
     {
         if(!$this->getAttribute('accept_html', false)) {
-            $value = htmlentities($value);
+            $value = htmlspecialchars($value);
         }
         
         $this->value = $value;
